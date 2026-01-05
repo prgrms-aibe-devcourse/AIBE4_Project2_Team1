@@ -4,3 +4,6 @@ server:
 spring:
   application:
     name: pr1mary
+
+  profiles:
+    active: dev
