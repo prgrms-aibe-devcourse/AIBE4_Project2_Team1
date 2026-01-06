@@ -8,7 +8,8 @@ public record LessonResponse(
         String title,
         Subjects subjects,
         Long price,
-        Double averageRating
+        Double averageRating,
+        String teacherName
 ) {
         public static LessonResponse from(Lesson lesson) {
                 return new LessonResponse(
@@ -16,7 +17,8 @@ public record LessonResponse(
                         lesson.getTitle(),
                         lesson.getSubjects(),
                         lesson.getPrice(),
-                        lesson.getAverageRating()
+                        lesson.getAverageRating(),
+                        lesson.getUser().getName()
                 );
         }
 }

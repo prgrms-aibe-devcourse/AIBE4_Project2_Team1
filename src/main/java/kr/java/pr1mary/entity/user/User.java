@@ -18,6 +18,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;  // BCrypt 암호화된 비밀번호
 
+    @Column(nullable = false)
+    private String name;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;

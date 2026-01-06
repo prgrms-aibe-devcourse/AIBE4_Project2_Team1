@@ -7,6 +7,7 @@ import kr.java.pr1mary.dto.view.LessonForm;
 import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.entity.user.User;
 import kr.java.pr1mary.repository.LessonRepository;
+import kr.java.pr1mary.repository.TeacherProfileRepository;
 import kr.java.pr1mary.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,23 +23,28 @@ import java.util.stream.Collectors;
 public class LessonService {
     private final LessonRepository lessonRepository;
     private final UserRepository userRepository;
+    private final TeacherProfileRepository teacherProfileRepository;
 
     @Transactional
-    public void save(LessonForm form, Long userId){
+    public void saveLesson(LessonForm form, Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-        
-        // TODO: 유저가 선생님인지 확인
+
+        if(!teacherProfileRepository.existsTeacherProfileByUser_Id(userId)){
+            throw new IllegalArgumentException("선생님이 아닙니다.");
+        }
 
         Lesson lesson = Lesson.create(form, user);
-        Lesson saved = lessonRepository.save(lesson);
-
-        LessonResponse.from(saved);
+        lessonRepository.save(lesson);
     }
     
-    // TODO: 인기 과외 목록 조회
+    // 인기 과외 목록 조회
+    public List<LessonResponse> getPopularLessons(){
+        return lessonRepository.findPopularLessons().stream()
+                .map(LessonResponse::from).collect(Collectors.toList());
+    }
 
-    // 과외 상세
+    // 과외 상세 조회
     public LessonDetailResponse getLessonDetail(Long lessonId){
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new EntityNotFoundException("과외를 찾을 수 없습니다."));
@@ -58,10 +64,7 @@ public class LessonService {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new EntityNotFoundException("리뷰를 찾을 수 없습니다."));
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
-        if(!Objects.equals(lesson.getUser().getId(), user.getId())){
+        if(!Objects.equals(lesson.getUser().getId(), userId)){
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
 

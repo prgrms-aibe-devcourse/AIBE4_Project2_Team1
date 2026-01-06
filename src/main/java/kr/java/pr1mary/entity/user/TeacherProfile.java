@@ -9,9 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TeacherProfile extends BaseEntity {
-    @Column(nullable = false)
-    private String name;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>결제 창</title>
+    <!-- 토스페이먼츠 결제창 SDK 추가 -->
+    <script src="https://js.tosspayments.com/v2/standard"></script>
+</head>
+<body>
+    <h2>결제 페이지</h2>
+    <input type="hidden" id="amount" name="amount" value="10000">
+
+    <button onclick="createPayment()">결제하기</button>
+
+    <script type="text/javascript">
+        const num = generateTodayWithRandom();
+        const price = document.getElementById('amount').value;
+
+        function generateTodayWithRandom() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let randomStr = '';
+            for (let i = 0; i < 8; i++) {
+                randomStr += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+
+            return `${yyyy}${mm}${dd}_${randomStr}`;
+        }
+
+        function createPayment() {
+            // TODO: booking 생성 후 bookingId 반환
+
+            // toss 결제
+            const clientKey = "test_ck_yZqmkKeP8gWj1B0QjXRB8bQRxB9l";
+            const tossPayments = TossPayments(clientKey);
+            const payment = tossPayments.payment({customerKey: TossPayments.ANONYMOUS})
+
+            // 토스 결제
+            payment.requestPayment({
+                method: "CARD",
+                amount: {
+                    currency: "KRW",
+                    value: Number(price),
+                },
+                orderId: num,
+                orderName: "강의",
+                successUrl: window.location.origin + "/booking/success",
+                failUrl: window.location.origin + "/booking/fail",
+                customerName: "",
+                card: {
+                    useEscrow: false,
+                    flowMode: "DEFAULT",
+                    useCardPoint: false,
+                    useAppCardOnly: false,
+                },
+            });
+        }
+    </script>
+</body>
+</html>
