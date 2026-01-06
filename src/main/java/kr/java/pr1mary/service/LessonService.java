@@ -1,9 +1,9 @@
 package kr.java.pr1mary.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import kr.java.pr1mary.dto.api.request.LessonRequest;
 import kr.java.pr1mary.dto.api.response.LessonDetailResponse;
 import kr.java.pr1mary.dto.api.response.LessonResponse;
+import kr.java.pr1mary.dto.view.LessonForm;
 import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.entity.user.User;
 import kr.java.pr1mary.repository.LessonRepository;
@@ -24,16 +24,16 @@ public class LessonService {
     private final UserRepository userRepository;
 
     @Transactional
-    public LessonResponse save(LessonRequest lessonRequest, Long userId){
+    public void save(LessonForm form, Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
         
         // TODO: 유저가 선생님인지 확인
 
-        Lesson lesson = Lesson.create(lessonRequest, user);
+        Lesson lesson = Lesson.create(form, user);
         Lesson saved = lessonRepository.save(lesson);
 
-        return LessonResponse.from(saved);
+        LessonResponse.from(saved);
     }
     
     // TODO: 인기 과외 목록 조회
