@@ -37,6 +37,11 @@ public class LessonService {
         Lesson lesson = Lesson.create(form, user);
         lessonRepository.save(lesson);
     }
+
+    public Lesson getLesson(Long lessonId){
+        return lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new EntityNotFoundException("과외를 찾을 수 없습니다."));
+    }
     
     // 인기 과외 목록 조회
     public List<LessonResponse> getPopularLessons(){
