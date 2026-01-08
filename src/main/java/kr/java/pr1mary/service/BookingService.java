@@ -122,4 +122,17 @@ public class BookingService {
         // 스케줄 원상 복구(다시 예약할 수 있게 함)
         booking.getSchedule().setIsBooked(false);
     }
+
+    // 선생님의 예약 가능 스케줄 조회
+    @Transactional(readOnly = true)
+    public List<ScheduleSlotResponse> getAvailableSchedules(Long teacherId){
+
+        // DB에서 선생님 ID로 검색 + 예약 안된 것(isBooked=false)만 가져오기
+        List<Schedule> schedules = scheduleRepository.findAllByUserIdAndIsBookedFalseOrderByStartTimeAsc(teacherId);
+
+        // DTO로 변환
+        return schedules.stream()
+                .map(ScheduleSlotResponse::from)
+                .collect(Collectors.toList());
+    }
 }
