@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 public record BookingCreateRequest(
 
         // Class-Booking-02 수업 예약 요청
+        @NotNull(message = "학생 ID는 필수입니다.")
+        Long studentId,
+
         @NotNull(message="스케줄 ID는 필수입니다")
         Long scheduleId,
 

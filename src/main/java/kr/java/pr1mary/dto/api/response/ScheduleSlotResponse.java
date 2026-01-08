@@ -4,6 +4,7 @@ import kr.java.pr1mary.entity.lesson.Schedule;
 
 import java.time.LocalDateTime;
 
+// 👉 선생님 시간표 탐색/선택
 public record ScheduleSlotResponse(
         Long scheduleId,
         LocalDateTime startTime,

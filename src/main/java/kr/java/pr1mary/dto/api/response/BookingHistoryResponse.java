@@ -5,6 +5,8 @@ import kr.java.pr1mary.entity.lesson.Subjects;
 
 import java.time.LocalDateTime;
 
+// 👉 예약 현황 조회용
+// 메인 페이지 수업 예약 조회 리스트/캘린더 탭
 public record BookingHistoryResponse(
 
         // Booking-History-01 학생 예약 현황 및 TimeTable

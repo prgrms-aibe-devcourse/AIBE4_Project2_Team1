@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
+public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     // 특정 선생님의 예약 가능한 스케줄 조회
     List<Schedule> findAllByUserIdAndIsBookedFalseOrderByStartTimeAsc(Long teacherId);
     // 특정 날짜 범위의 스케줄 조회(캘린더 뷰)

@@ -9,7 +9,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // Booking-History-01 나의 예약 현황 조회
     List<Booking> findAllByStudentIdOrderByScheduleStartTimeDesc(Long studentId);
-    List<Booking> findAllByStudentIdOrderByStartTimeDesc(Long studentId);
 
     // System-Logic-01 중복 예약 방지 검증용
     boolean existsByScheduleIdAndStatusNot(Long scheduleId, String status);
