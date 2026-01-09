@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/lessons")
 @RequiredArgsConstructor
-public class LessonController {
+public class LessonViewController {
 
     private final LessonService lessonService;
 

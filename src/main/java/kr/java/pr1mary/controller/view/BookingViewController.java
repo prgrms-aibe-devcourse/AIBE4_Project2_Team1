@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/booking")
-public class BookingController {
+public class BookingViewController {
     @GetMapping
     public String bookingPage(){
         return "pages/booking/booking-window";

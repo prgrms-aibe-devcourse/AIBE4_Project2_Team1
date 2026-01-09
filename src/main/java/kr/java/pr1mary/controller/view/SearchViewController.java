@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/search")
-public class SearchController {
+public class SearchViewController {
     private final SearchService searchService;
 
     // 검색 창 페이지
