@@ -11,10 +11,47 @@
   <form th:action="@{/search}" method="get">
     <input type="text"
            name="keyword"
-           placeholder="과외명 또는 선생님 이름"
            th:value="${keyword}">
+
+    <input type="hidden"
+           id="subject"
+           name="subject"
+           th:value="${filter.subject}">
+    <input type="hidden"
+           id="mode"
+           name="mode"
+           th:value="${filter.mode}">
+
     <button type="submit">검색</button>
   </form>
+
+  <h3>상세 검색</h3>
+
+  <div>
+    <select id="lessonSubjects" onchange="updateSubject()">
+      <option value="">과목</option>
+      <option value="MATH" th:selected="${filter.subject} == 'MATH'">수학</option>
+      <option value="KOREAN" th:selected="${filter.subject} == 'KOREAN'">국어</option>
+      <option value="ENGLISH" th:selected="${filter.subject} == 'ENGLISH'">영어</option>
+      <option value="SCIENCE" th:selected="${filter.subject} == 'SCIENCE'">과학</option>
+    </select>
+
+    <select id="lessonMode" onchange="updateMode()">
+      <option value="">모드</option>
+      <option value="ONLINE" th:selected="${filter.mode} == 'ONLINE'">온라인</option>
+      <option value="OFFLINE" th:selected="${filter.mode} == 'OFFLINE'">오프라인</option>
+    </select>
+
+  </div>
+
+  <script>
+    function updateSubject(){
+      document.getElementById("subject").value = document.getElementById("lessonSubjects").value;
+    }
+    function updateMode(){
+      document.getElementById("mode").value = document.getElementById("lessonMode").value;
+    }
+  </script>
 
   <hr>
 
@@ -26,6 +63,14 @@
         <b th:text="${lesson.lessonName}"></b>
         -
         <span th:text="${lesson.teacherName}"></span>
+        -
+        <span th:text="${lesson.subject}"></span>
+        -
+        <span th:text="${lesson.averageRating}"></span>
+        -
+        <span th:text="${lesson.mode}"></span>
+        -
+        <span th:text="${lesson.price}"></span>
       </li>
     </ul>
 

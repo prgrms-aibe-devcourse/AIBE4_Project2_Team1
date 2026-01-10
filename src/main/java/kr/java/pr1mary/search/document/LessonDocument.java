@@ -30,6 +30,10 @@ public class LessonDocument {
     @Field(type = FieldType.Text)
     private String subject;
 
+    /** 수업 방식 */
+    @Field(type = FieldType.Text)
+    private String mode;
+
     /** 별점 */
     @Field(type = FieldType.Double)
     private Double averageRating;
@@ -47,6 +51,7 @@ public class LessonDocument {
         lessonDocument.setSubject(lesson.getSubjects().toString());
         lessonDocument.setAverageRating(lesson.getAverageRating());
         lessonDocument.setPrice(lesson.getPrice());
+        lessonDocument.setMode(lesson.getMode().toString());
 
         return lessonDocument;
     }
