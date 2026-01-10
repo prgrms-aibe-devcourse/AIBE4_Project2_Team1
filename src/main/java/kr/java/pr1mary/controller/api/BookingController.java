@@ -1,6 +1,7 @@
 package kr.java.pr1mary.controller.api;
 
 import jakarta.validation.Valid;
+import kr.java.pr1mary.dto.api.request.BookingCancelRequest;
 import kr.java.pr1mary.dto.api.request.BookingCreateRequest;
 import kr.java.pr1mary.dto.api.response.ApiResponse;
 import kr.java.pr1mary.dto.api.response.BookingCreateResponse;
@@ -19,6 +20,10 @@ import java.util.List;
 public class BookingController {
     private final BookingService bookingService;
 
+    // ==========================================
+    //  [학생 기능] 예약 관리 (예약 요청 / 예약 취소 / 예약 조회)
+    // ==========================================
+
     // 👉 수업 예약 요청 POST
     // URL: POST /api/bookings
     // Body: { "studentId": 1, "scheduleId": 10, "requestMessage": "..." }
@@ -34,12 +39,12 @@ public class BookingController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.created("예약 요청 성공 (대기 상태)", data));
+                .body(ApiResponse.created("수강 신청 성공 (대기 상태)", data));
     }
 
      // 👉 수업 예약 취소
-     // URL: PATCH /api/bookings/9001/cancel?studentId=2001
-    @PatchMapping("/{bookingId}/cancel")
+     // URL: PATCH /api/bookings/9001/cancel-student?studentId=2001
+    @PatchMapping("/{bookingId}/cancel-student")
     public ResponseEntity<ApiResponse<Void>> cancelBooking(
             @PathVariable Long bookingId,
             @RequestParam Long studentId
@@ -47,7 +52,7 @@ public class BookingController {
         bookingService.cancelBooking(studentId, bookingId);
 
         // 200 OK 메시지 전달
-        return ResponseEntity.ok(ApiResponse.ok("예약 취소 성공"));
+        return ResponseEntity.ok(ApiResponse.ok("수강 신청 취소 성공"));
     }
 
      // 👉내 예약 조회
@@ -59,6 +64,40 @@ public class BookingController {
         List<BookingHistoryResponse> response = bookingService.getMyBookings(studentId);
 
         // 200 OK 데이터 전달
-        return ResponseEntity.ok(ApiResponse.ok("예약 내역 조회 성공", response));
+        return ResponseEntity.ok(ApiResponse.ok("수강 신청 내역 조회 성공", response));
+    }
+
+    // ==========================================
+    //  [선생님 기능] 예약 관리 (수락 / 거절 / 취소)
+    // ==========================================
+    // 👉 예약 수락 PENDING -> CONFIRMED
+    @PatchMapping("/{bookingId}/accept")
+    public ResponseEntity<ApiResponse<Void>> acceptBooking(
+            @PathVariable Long bookingId,
+            @RequestParam Long teacherId
+    ){
+        bookingService.acceptBooking(teacherId, bookingId);
+        return ResponseEntity.ok(ApiResponse.ok("수강신청이 완료되었습니다."));
+    }
+
+    // 👉 예약 거절 PENDING -> REJECTED
+    @PatchMapping("/{bookingId}/reject")
+    public ResponseEntity<ApiResponse<Void>> rejectBooking(
+            @PathVariable Long bookingId,
+            @RequestParam Long teacherId
+    ){
+        bookingService.rejectBooking(teacherId, bookingId);
+        return ResponseEntity.ok(ApiResponse.ok("수강 신청이 거절되었습니다."));
+    }
+
+    // 👉 확정된 예약 취소 CONFIRMED -> CANCELLED_BY_TEACHER
+    @PatchMapping("/{bookingId}/cancel-teacher")
+    public ResponseEntity<ApiResponse<Void>> cancelBookingByTeacher(
+            @PathVariable Long bookingId,
+            @RequestParam Long teacherId,
+            @RequestBody @Valid BookingCancelRequest request
+    ){
+        bookingService.cancelBookingByTeacher(teacherId, bookingId, request.cancelReason());
+        return ResponseEntity.ok(ApiResponse.ok("수업 예약이 취소되었습니다."));
     }
 }

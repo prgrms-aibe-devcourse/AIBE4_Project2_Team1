@@ -9,9 +9,9 @@ import kr.java.pr1mary.entity.lesson.Schedule;
 import kr.java.pr1mary.entity.user.User;
 import kr.java.pr1mary.exception.InvalidDateException;
 import kr.java.pr1mary.repository.BookingRepository;
-import kr.java.pr1mary.repository.LessonRepository;
 import kr.java.pr1mary.repository.ScheduleRepository;
 import kr.java.pr1mary.repository.UserRepository;
+import kr.java.pr1mary.type.BookingStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,9 +56,13 @@ public class BookingService {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
+        // 선생님 존재 여부 확인
+        userRepository.findById(teacherId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 선생님입니다."));
+
         // 예약 안된(is Booked = false) 스케줄만 가져옴
-        List<Schedule> schedules = scheduleRepository.findAllByUserIdAndStartTimeBetweenAndIsBookedFalseOrderByStartTimeAsc(
-                teacherId, startOfDay, endOfDay
+        List<Schedule> schedules = scheduleRepository.findAllByUserIdOrderByStartTimeDesc(
+                teacherId
         );
 
         return schedules.stream()
@@ -95,7 +99,7 @@ public class BookingService {
 
         // System-Logic-01 중복 예약 검증(2차:Booking 테이블 확인)
         boolean isDuplicate = bookingRepository.existsByScheduleIdAndStatusNot(
-                schedule.getId(), "CANCELLED"
+                schedule.getId(), BookingStatus.CANCELLED_BY_STUDENT
         );
         if(isDuplicate){
             throw new IllegalStateException("이미 예약된 시간입니다.");
@@ -106,7 +110,9 @@ public class BookingService {
         booking.setStudent(student);
         booking.setLesson(lesson);
         booking.setSchedule(schedule);
-        booking.setStatus("PENDING");
+
+        booking.setStatus(BookingStatus.PENDING);
+
         booking.setRequestMessage(request.requestMessage());
 
         bookingRepository.save(booking);
@@ -131,7 +137,6 @@ public class BookingService {
         // 취소 가능 기간 검증 - 3일 전까지만 가능함
         Schedule schedule = booking.getSchedule();
         LocalDateTime classStartTime = schedule.getStartTime(); // 수업 시작 시간
-
         // * 데드라인 계산 : 수업 시작 시간 - 3일
         LocalDateTime cancelDeadLine = classStartTime.minusDays(3);
 
@@ -140,13 +145,12 @@ public class BookingService {
         }
 
         // 상태 변경(취소)
-        booking.setStatus("CANCELLED");
-
+        booking.setStatus(BookingStatus.CANCELLED_BY_STUDENT);
         // 스케줄 원상 복구(다시 예약할 수 있게 함)
         booking.getSchedule().setIsBooked(false);
     }
 
-    // 선생님의 예약 가능 스케줄 조회
+    // Booking-History-01 선생님의 예약 가능 스케줄 조회
     @Transactional(readOnly = true)
     public List<ScheduleSlotResponse> getAvailableSchedules(Long teacherId){
 
@@ -173,5 +177,70 @@ public class BookingService {
         if(endTime.isBefore(startTime)||endTime.equals(startTime)){
             throw new InvalidDateException("잘못된 수업 시간입니다. (종료 시간이 시작 시간보다 빠르거나 같음)");
         }
+    }
+
+    // Class-Booking-04 선생님의 예약 요청 수락
+    @Transactional
+    public void acceptBooking(Long teacherId, Long bookingId){
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
+
+        // 권한 검증 : 이 예약이 해당 선생님의 수업에 대한 예약인지 확인
+        // Booking -> Schedule -> User(Teacher)로 접근
+        if(!booking.getSchedule().getUser().getId().equals(teacherId)){
+            throw new SecurityException("해당 예약을 수락할 권한이 없습니다.");
+        }
+
+        // 상태 검증 : 대기(PENDING) 상태일 때만 수락 가능
+        if(booking.getStatus() != BookingStatus.PENDING){
+            throw new IllegalStateException("대기 상태의 예약만 수락할 수 있습니다.");
+        }
+
+        booking.setStatus(BookingStatus.CONFIRMED);
+    }
+
+    // Class-Booking-05 선생님의 예약 요청 거절
+    @Transactional
+    public void rejectBooking(Long teacherId, Long bookingId){
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
+
+        if(!booking.getSchedule().getUser().getId().equals(teacherId)){
+            throw new SecurityException("해당 예약을 거절할 권한이 없습니다.");
+        }
+
+        if(booking.getStatus() != BookingStatus.PENDING){
+            throw new IllegalArgumentException("대기 상태의 예약만 거절할 수 있습니다.");
+        }
+
+        // 상태 변경
+        booking.setStatus(BookingStatus.REJECTED);
+
+        // 스케줄 원상 복구
+        booking.getSchedule().setIsBooked(false);
+    }
+
+    // Class-Booking-06 선생님의 수강 확정된 예약 취소
+    @Transactional
+    public void cancelBookingByTeacher(Long teacherId, Long bookingId, String cancelReason){
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
+        // 권한 검증 : 해당 스케줄의 선생님인지 확인
+        if(!booking.getSchedule().getUser().getId().equals(teacherId)){
+            throw new SecurityException("본인의 수업 예약만 취소할 수 있습니다.");
+        }
+
+        // 상태 검증
+        BookingStatus status = booking.getStatus();
+        if (status != BookingStatus.PENDING && status != BookingStatus.CONFIRMED) {
+            throw new IllegalStateException("이미 처리되었거나 취소된 예약은 다시 취소할 수 없습니다.");
+        }
+
+        // 상태 변경
+        booking.setStatus(BookingStatus.CANCELLED_BY_TEACHER);
+        booking.setCancelReason(cancelReason);
+
+        // 스케줄 복구
+        booking.getSchedule().setIsBooked(false);
     }
 }
