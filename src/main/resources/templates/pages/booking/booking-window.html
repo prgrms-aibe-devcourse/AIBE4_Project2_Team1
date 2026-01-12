@@ -20,7 +20,7 @@
     <button onclick="createPayment()">결제하기</button>
 
     <script type="text/javascript">
-        // 랜덤 문자 생성
+        // 랜덤 orderId 생성
         function generateTodayWithRandom() {
             const today = new Date();
             const yyyy = today.getFullYear();
@@ -81,8 +81,8 @@
                     },
                     orderId: num,
                     orderName: "강의",
-                    successUrl: window.location.origin + "/booking/success?bookingId=" + bookingId,
-                    failUrl: window.location.origin + "/booking/fail",
+                    successUrl: window.location.origin + "/payment/success?bookingId=" + bookingId,
+                    failUrl: window.location.origin + "/payment/fail",
                     customerName: "",
                     card: {
                         useEscrow: false,
