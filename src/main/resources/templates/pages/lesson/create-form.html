@@ -162,9 +162,11 @@
                     </div>
                     <select id="subjects" class="custom-select" required>
                         <option value="" disabled selected>카테고리를 선택해주세요 (ex. 수학, 영어)</option>
-                        <option th:each="subj : ${subjects}"
-                                th:value="${subj.name()}"
-                                th:text="${subj.description}">과목명</option>
+                        <option value="MATH">수학</option>
+                        <option value="KOREAN">국어</option>
+                        <option value="ENGLISH">영어</option>
+                        <option value="HISTORY">역사</option>
+                        <option value="SCIENCE">과학</option>
                     </select>
                 </div>
 
