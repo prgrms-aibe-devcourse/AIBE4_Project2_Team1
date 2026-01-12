@@ -13,9 +13,7 @@
     <button onclick="createPayment()">결제하기</button>
 
     <script type="text/javascript">
-        const num = generateTodayWithRandom();
-        const price = document.getElementById('amount').value;
-
+        // 랜덤 문자 생성
         function generateTodayWithRandom() {
             const today = new Date();
             const yyyy = today.getFullYear();
@@ -32,6 +30,9 @@
         }
 
         function createPayment() {
+            const num = generateTodayWithRandom();
+            const price = document.getElementById('amount').value;
+
             // TODO: booking 생성 후 bookingId 반환
 
             // toss 결제

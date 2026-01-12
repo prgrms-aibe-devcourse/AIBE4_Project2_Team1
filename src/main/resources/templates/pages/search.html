@@ -33,6 +33,7 @@
       <option value="MATH" th:selected="${filter.subject} == 'MATH'">수학</option>
       <option value="KOREAN" th:selected="${filter.subject} == 'KOREAN'">국어</option>
       <option value="ENGLISH" th:selected="${filter.subject} == 'ENGLISH'">영어</option>
+      <option value="HISTORY" th:selected="${filter.subject} == 'HISTORY'">역사</option>
       <option value="SCIENCE" th:selected="${filter.subject} == 'SCIENCE'">과학</option>
     </select>
 
@@ -64,7 +65,7 @@
         -
         <span th:text="${lesson.teacherName}"></span>
         -
-        <span th:text="${lesson.subject}"></span>
+        <span th:text="${lesson.subjectName}"></span>
         -
         <span th:text="${lesson.averageRating}"></span>
         -
