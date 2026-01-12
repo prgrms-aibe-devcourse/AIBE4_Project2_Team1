@@ -30,6 +30,10 @@ public class LessonDocument {
     @Field(type = FieldType.Text)
     private String subject;
 
+    /** 과목이름 */
+    @Field(type = FieldType.Text)
+    private String subjectName;
+
     /** 수업 방식 */
     @Field(type = FieldType.Text)
     private String mode;
@@ -49,6 +53,7 @@ public class LessonDocument {
         lessonDocument.setLessonName(lesson.getTitle());
         lessonDocument.setTeacherName(lesson.getUser().getName());
         lessonDocument.setSubject(lesson.getSubjects().toString());
+        lessonDocument.setSubjectName(lesson.getSubjects().getDesc());
         lessonDocument.setAverageRating(lesson.getAverageRating());
         lessonDocument.setPrice(lesson.getPrice());
         lessonDocument.setMode(lesson.getMode().toString());

@@ -8,14 +8,19 @@
 </head>
 <body>
     <h2>결제 페이지</h2>
-    <input type="hidden" id="amount" name="amount" value="10000">
 
+    <input type="hidden" id="studentId" value="1">
+    <input type="hidden" id="scheduleId" value="1">
+    <input type="hidden" id="amount" value="10000">
+
+    <h3>요청 메시지</h3>
+    <input type="text" id="requestMessage" placeholder="메세지를 작성해주세요">
+
+    <br>
     <button onclick="createPayment()">결제하기</button>
 
     <script type="text/javascript">
-        const num = generateTodayWithRandom();
-        const price = document.getElementById('amount').value;
-
+        // 랜덤 orderId 생성
         function generateTodayWithRandom() {
             const today = new Date();
             const yyyy = today.getFullYear();
@@ -31,33 +36,64 @@
             return `${yyyy}${mm}${dd}_${randomStr}`;
         }
 
-        function createPayment() {
+        async function createPayment() {
+            const num = generateTodayWithRandom();
+            const price = document.getElementById('amount').value;
+
             // TODO: booking 생성 후 bookingId 반환
+            const bookingRequest = {
+                studentId: document.getElementById('studentId').value,
+                scheduleId: document.getElementById('scheduleId').value,
+                requestMessage: document.getElementById('requestMessage').value
+            }
 
-            // toss 결제
-            const clientKey = "test_ck_yZqmkKeP8gWj1B0QjXRB8bQRxB9l";
-            const tossPayments = TossPayments(clientKey);
-            const payment = tossPayments.payment({customerKey: TossPayments.ANONYMOUS})
+            try {
+                // 2. 예약 생성 API 호출
+                const response = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(bookingRequest)
+                });
 
-            // 토스 결제
-            payment.requestPayment({
-                method: "CARD",
-                amount: {
-                    currency: "KRW",
-                    value: Number(price),
-                },
-                orderId: num,
-                orderName: "강의",
-                successUrl: window.location.origin + "/booking/success",
-                failUrl: window.location.origin + "/booking/fail",
-                customerName: "",
-                card: {
-                    useEscrow: false,
-                    flowMode: "DEFAULT",
-                    useCardPoint: false,
-                    useAppCardOnly: false,
-                },
-            });
+                if (!response.ok) {
+                    throw new Error();
+                }
+
+                const result = await response.json();
+
+                const bookingId = result.data.bookingId;
+
+                console.log("예약 생성 성공, ID:", bookingId);
+
+                // toss 결제
+                const clientKey = "test_ck_yZqmkKeP8gWj1B0QjXRB8bQRxB9l";
+                const tossPayments = TossPayments(clientKey);
+                const payment = tossPayments.payment({customerKey: TossPayments.ANONYMOUS})
+
+                // 토스 결제
+                payment.requestPayment({
+                    method: "CARD",
+                    amount: {
+                        currency: "KRW",
+                        value: Number(price),
+                    },
+                    orderId: num,
+                    orderName: "강의",
+                    successUrl: window.location.origin + "/payment/success?bookingId=" + bookingId,
+                    failUrl: window.location.origin + "/payment/fail",
+                    customerName: "",
+                    card: {
+                        useEscrow: false,
+                        flowMode: "DEFAULT",
+                        useCardPoint: false,
+                        useAppCardOnly: false,
+                    },
+                });
+            } catch (error) {
+                alert("예약 생성 중 오류가 발생했습니다.");
+            }
         }
     </script>
 </body>
