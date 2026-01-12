@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수업 일정 관리 - Pr1mary</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        /* --- 캘린더 전용 스타일 --- */
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            /* 헤더(60px) 고려하여 상단 여백 추가 */
+            padding-top: 40px;
+            padding-bottom: 50px;
+        }
+
+        /* 범례 (Legend) */
+        .legend-container { display: flex; justify-content: flex-end; gap: 15px; margin-bottom: 12px; font-size: 0.9rem; color: #555; font-weight: 500; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+        /* 상태별 색상 */
+        .dot-pending { background-color: #FFA726; }    /* 주황 */
+        .dot-confirmed { background-color: #2196F3; }  /* 파랑 */
+        .dot-cancelled { background-color: #BDBDBD; }  /* 회색 */
+        .dot-completed { background-color: #757575; }  /* 짙은 회색 */
+
+        /* 캘린더 카드 */
+        .calendar-wrapper {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            border: 1px solid #eee;
+        }
+
+        /* FullCalendar 커스텀 (버튼, 폰트 등) */
+        .fc-toolbar-title { font-size: 1.5rem !important; font-weight: 700 !important; color: #333; }
+        .fc-button-primary { background-color: #2196F3 !important; border-color: #2196F3 !important; }
+        .fc-day-today { background-color: #FFFDE7 !important; } /* 오늘 날짜 연한 노랑 */
+
+        /* 이벤트 박스 디자인 */
+        .custom-event-box {
+            display: flex; flex-direction: column;
+            padding: 2px 4px; border-radius: 4px;
+            transition: 0.2s;
+        }
+        .custom-event-box:hover { background-color: #f5f5f5; }
+        .event-top-row { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; color: #666; }
+        .event-title-row { padding-left: 15px; font-weight: 700; color: #333; font-size: 0.9rem; }
+
+        /* 모달 스타일 */
+        .modal-content { border-radius: 16px; border: none; }
+        .modal-header { border-bottom: 1px solid #f0f0f0; padding: 20px 24px; }
+        .info-row { display: flex; margin-bottom: 12px; font-size: 0.95rem; }
+        .info-label { width: 80px; font-weight: 500; color: #888; }
+        .info-value { color: #333; flex: 1; }
+
+        /* 모달 내 뱃지 */
+        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; color: white; font-weight: 600; }
+        .badge-pending { background-color: #FFA726; }
+        .badge-confirmed { background-color: #2196F3; }
+        .badge-completed { background-color: #757575; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-logo">
+        <span class="material-icons-outlined menu-icon">menu</span>
+        <a href="/" style="text-decoration: none; color: inherit;">D-trip Edu</a>
+    </div>
+    <div class="header-icons">
+        <span class="material-icons-outlined" onclick="location.href='/chat'">chat_bubble</span>
+        <span class="material-icons-outlined">person</span>
+    </div>
+</header>
+
+<div class="main-container">
+    <div class="legend-container">
+        <div class="legend-item"><span class="dot dot-pending"></span> 대기</div>
+        <div class="legend-item"><span class="dot dot-confirmed"></span> 확정</div>
+        <div class="legend-item"><span class="dot dot-cancelled"></span> 취소/종료</div>
+    </div>
+
+    <div class="calendar-wrapper">
+        <div id="calendar"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="eventDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLessonTitle">수업 상세 정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="info-row">
+                    <div class="info-label">학생</div>
+                    <div class="info-value" id="modalStudentName">-</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">시간</div>
+                    <div class="info-value" id="modalTime">-</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">장소</div>
+                    <div class="info-value" id="modalLocation">온라인(Zoom)</div>
+                </div>
+                <div class="info-row" style="align-items: center;">
+                    <div class="info-label">상태</div>
+                    <div class="info-value">
+                        <span id="modalStatusBadge" class="status-badge">-</span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">메시지</div>
+                    <div class="info-value text-muted" id="modalMessage">-</div>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: space-between;">
+                <div id="dynamic-btns">
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const currentTeacherId = [[${teacherId}]] || 101;
+    let eventModal;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        eventModal = new bootstrap.Modal(document.getElementById('eventDetailModal'));
+
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'ko',
+            height: 'auto',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,listWeek'
+            },
+
+            // 1. API 데이터 호출
+            events: function(info, successCallback, failureCallback) {
+                fetch(`/api/schedules/teacher?teacherId=${currentTeacherId}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error('서버 통신 오류');
+                        return res.json();
+                    })
+                    .then(json => {
+                        // 서버 응답 구조: { data: [...] }
+                        if (!json.data) { successCallback([]); return; }
+
+                        const events = json.data.map(item => ({
+                            id: item.scheduleId,
+                            title: item.lessonTitle || '과목 미정',
+                            start: item.startTime,
+                            end: item.endTime,
+                            // 상세 정보는 extendedProps에 담아둠
+                            extendedProps: {
+                                status: item.status, // AVAILABLE, PENDING, CONFIRMED...
+                                studentName: item.studentName || '예약 없음',
+                                bookingId: item.bookingId, // 중요!
+                                message: item.studentMessage || '-',
+                                location: 'Zoom'
+                            }
+                        }));
+                        successCallback(events);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        failureCallback(err);
+                    });
+            },
+
+            // 2. 캘린더에 표시될 모양 (HTML 커스텀)
+            eventContent: function(arg) {
+                const props = arg.event.extendedProps;
+                const timeText = arg.timeText || ''; // "14:00"
+
+                let dotClass = 'dot-cancelled'; // 기본 회색
+                if (props.status === 'PENDING') dotClass = 'dot-pending';
+                else if (props.status === 'CONFIRMED') dotClass = 'dot-confirmed';
+                else if (props.status === 'COMPLETED') dotClass = 'dot-completed';
+
+                // 예약이 없는 빈 스케줄인 경우 처리
+                if (props.status === 'AVAILABLE') {
+                    return { html: `<div class="custom-event-box text-muted" style="opacity:0.6"><small>${timeText} (빈 타임)</small></div>` };
+                }
+
+                return {
+                    html: `
+                        <div class="custom-event-box">
+                            <div class="event-top-row">
+                                <span class="dot ${dotClass}"></span>
+                                <span>${timeText}</span>
+                            </div>
+                            <div class="event-title-row">
+                                ${props.studentName}
+                            </div>
+                        </div>
+                    `
+                };
+            },
+
+            // 3. 클릭 시 모달 띄우기
+            eventClick: function(info) {
+                const props = info.event.extendedProps;
+                const bookingId = props.bookingId;
+
+                // (1) 모달 내용 채우기
+                document.getElementById('modalLessonTitle').innerText = info.event.title;
+                document.getElementById('modalStudentName').innerText = props.studentName;
+                document.getElementById('modalMessage').innerText = props.message;
+                document.getElementById('modalLocation').innerText = props.location;
+
+                // 시간 포맷
+                const start = info.event.start;
+                const end = info.event.end;
+                const dateStr = start.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+                const timeStr = `${start.toTimeString().substring(0,5)} ~ ${end ? end.toTimeString().substring(0,5) : ''}`;
+                document.getElementById('modalTime').innerText = `${dateStr} ${timeStr}`;
+
+                // 뱃지 설정
+                const badge = document.getElementById('modalStatusBadge');
+                badge.className = 'status-badge';
+                let statusText = '-';
+
+                if (props.status === 'CONFIRMED') {
+                    badge.classList.add('badge-confirmed'); statusText = '예약 확정';
+                } else if (props.status === 'PENDING') {
+                    badge.classList.add('badge-pending'); statusText = '승인 대기';
+                } else if (props.status === 'COMPLETED') {
+                    badge.classList.add('badge-completed'); statusText = '수업 종료';
+                } else {
+                    badge.classList.add('badge-completed'); statusText = '취소됨/미예약';
+                }
+                badge.innerText = statusText;
+
+                // (2) 동적 버튼 생성
+                const btnContainer = document.getElementById('dynamic-btns');
+                btnContainer.innerHTML = ''; // 초기화
+
+                // 예약 ID가 없으면 버튼 생성 안 함 (빈 타임 등)
+                if (!bookingId) {
+                    eventModal.show();
+                    return;
+                }
+
+                // A. 대기 상태 -> 수락/거절
+                if (props.status === 'PENDING') {
+                    btnContainer.innerHTML = `
+                        <button class="btn btn-primary btn-sm me-1" onclick="handleBooking('ACCEPT', ${bookingId})">수락</button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="handleBooking('REJECT', ${bookingId})">거절</button>
+                    `;
+                }
+                // B. 확정 상태 -> 3일 전 취소 가능
+                else if (props.status === 'CONFIRMED') {
+                    const now = new Date();
+                    const diffMs = start.getTime() - now.getTime();
+                    const diffDays = diffMs / (1000 * 60 * 60 * 24); // 일 단위 변환
+
+                    if (diffDays >= 3.0) {
+                        // 3일 이상 남음 -> 취소 버튼 노출
+                        btnContainer.innerHTML = `
+                            <button class="btn btn-danger btn-sm" onclick="handleBooking('CANCEL', ${bookingId})">수업 취소</button>
+                        `;
+                    } else {
+                        // 3일 미만 -> 경고 문구
+                        btnContainer.innerHTML = `
+                            <span class="text-secondary small fw-bold">⚠ 수업 3일 전: 취소 불가</span>
+                        `;
+                    }
+                }
+
+                eventModal.show();
+            }
+        });
+
+        calendar.render();
+    });
+
+    // 4. API 요청 핸들러 (수정됨: 취소 사유 추가)
+    function handleBooking(action, bookingId) {
+        let url = '';
+        let confirmMsg = '';
+        let bodyData = {}; // POST/PATCH 바디 데이터
+
+        if (action === 'ACCEPT') {
+            url = `/api/bookings/${bookingId}/accept`;
+            confirmMsg = '이 예약을 수락하시겠습니까?';
+        }
+        else if (action === 'REJECT') {
+            url = `/api/bookings/${bookingId}/reject`;
+            confirmMsg = '이 예약을 거절하시겠습니까?';
+        }
+        else if (action === 'CANCEL') {
+            url = `/api/bookings/${bookingId}/cancel-teacher`;
+
+            // [중요] 취소 사유 입력받기
+            const reason = prompt("취소 사유를 입력해주세요 (학생에게 전달됩니다):");
+            if (reason === null) return; // 취소 버튼 누름
+            if (reason.trim() === "") {
+                alert("취소 사유를 반드시 입력해야 합니다.");
+                return;
+            }
+
+            // 컨트롤러가 @RequestBody String cancelReason을 받으므로
+            // 일반 텍스트 그대로 전송하거나 JSON으로 보냄 (컨텐츠 타입 주의)
+            // 여기서는 텍스트 그대로 전송
+            bodyData = reason;
+            confirmMsg = '정말 취소하시겠습니까? (되돌릴 수 없습니다)';
+        }
+
+        if (!confirm(confirmMsg)) return;
+
+        // Axios 요청
+        axios.patch(url, bodyData, {
+            params: { teacherId: currentTeacherId }, // 컨트롤러에서 teacherId 요구 시
+            headers: {
+                // 문자열 전송 시 텍스트 타입 지정 (컨트롤러 설정에 따라 다를 수 있음)
+                'Content-Type': action === 'CANCEL' ? 'text/plain' : 'application/json'
+            }
+        })
+            .then(res => {
+                alert("처리되었습니다.");
+                eventModal.hide();
+                location.reload(); // 새로고침하여 상태 반영
+            })
+            .catch(err => {
+                console.error(err);
+                const msg = err.response?.data?.message || '오류가 발생했습니다.';
+                alert(msg);
+            });
+    }
+</script>
+</body>
+</html>

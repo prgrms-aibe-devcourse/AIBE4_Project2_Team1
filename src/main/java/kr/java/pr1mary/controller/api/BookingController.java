@@ -57,7 +57,7 @@ public class BookingController {
 
      // 👉내 예약 조회
      // URL: GET /api/bookings/my?studentId=2001
-    @GetMapping("/my")
+    @GetMapping("/courseHistory")
     public ResponseEntity<ApiResponse<List<BookingHistoryResponse>>> getMyBookings(
             @RequestParam Long studentId
     ){

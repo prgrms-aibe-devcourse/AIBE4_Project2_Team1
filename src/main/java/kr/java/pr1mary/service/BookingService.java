@@ -61,8 +61,8 @@ public class BookingService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 선생님입니다."));
 
         // 예약 안된(is Booked = false) 스케줄만 가져옴
-        List<Schedule> schedules = scheduleRepository.findAllByUserIdOrderByStartTimeDesc(
-                teacherId
+        List<Schedule> schedules = scheduleRepository.findAllByUserIdAndStartTimeBetweenOrderByStartTimeAsc(
+                teacherId, startOfDay, endOfDay
         );
 
         return schedules.stream()
@@ -80,7 +80,7 @@ public class BookingService {
                 .orElseThrow(() ->new IllegalArgumentException("존재하지 않는 학생입니다."));
 
         // 스케줄 조회
-        Schedule schedule = scheduleRepository.findById(request.scheduleId())
+        Schedule schedule = scheduleRepository.findByIdWithLock(request.scheduleId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스케줄입니다."));
 
         // System-Logic-02 시간 유효성 검사

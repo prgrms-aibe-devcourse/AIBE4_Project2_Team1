@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅 - D-trip Edu</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- [채팅 전용 스타일] --- */
+        /* style.css의 변수를 활용하여 일관성 유지 */
+
+        /* 1. 채팅방 레이아웃 (헤더 제외 나머지 공간 꽉 채우기) */
+        .chat-container {
+            /* [핵심] 전체 화면 높이 - 헤더 높이 = 남은 공간 */
+            height: calc(100vh - var(--header-height));
+            max-width: var(--max-width);
+            margin: 0 auto;
+
+            display: flex;
+            background-color: var(--white);
+            border-left: 1px solid var(--divider);
+            border-right: 1px solid var(--divider);
+            overflow: hidden; /* 이중 스크롤 방지 */
+        }
+
+        /* 2. 좌측 사이드바 */
+        .chat-sidebar {
+            width: 320px;
+            border-right: 1px solid var(--divider);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* 내부 스크롤 */
+            background-color: var(--white);
+        }
+
+        .chat-item {
+            display: flex;
+            padding: 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--bg-color); /* 연한 구분선 */
+            transition: background-color 0.2s;
+        }
+        .chat-item:hover { background-color: var(--bg-color); }
+        .chat-item.active { background-color: var(--light-primary); }
+
+        .profile-img {
+            width: 48px; height: 48px;
+            background-color: #ddd;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .chat-info { flex: 1; min-width: 0; }
+        .chat-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .nickname { font-weight: 700; font-size: 14px; }
+        .time { font-size: 12px; color: var(--text-secondary); }
+        .last-msg {
+            font-size: 13px; color: var(--text-secondary);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        /* 3. 우측 메인 영역 */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--white);
+            position: relative;
+        }
+
+        /* 초기 상태 (Empty State) */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+        }
+        .empty-icon { width: 64px; height: 64px; margin-bottom: 16px; color: #BDBDBD; }
+        .empty-btn {
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: var(--white);
+            border-radius: 20px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* 채팅방 화면 */
+        .chat-room-view {
+            display: none; /* JS로 제어 */
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-room-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--divider);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto; /* 메시지 영역만 스크롤 */
+            padding: 20px;
+            background-color: var(--bg-color); /* style.css의 배경색 활용 */
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .msg-other {
+            align-self: flex-start;
+            background-color: var(--white);
+            color: var(--text-primary);
+            border: 1px solid var(--divider);
+            border-top-left-radius: 0;
+        }
+
+        .msg-mine {
+            align-self: flex-end;
+            background-color: var(--primary);
+            color: var(--white);
+            border-top-right-radius: 0;
+        }
+
+        .input-area {
+            padding: 16px;
+            border-top: 1px solid var(--divider);
+            background-color: var(--white);
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--divider);
+            border-radius: 20px;
+            outline: none;
+        }
+        .chat-input:focus { border-color: var(--primary); }
+        .btn-send {
+            width: 48px; height: 48px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 모바일 반응형 처리 */
+        @media (max-width: 768px) {
+            .chat-container { border: none; }
+            .chat-sidebar { width: 100%; display: flex; } /* 목록만 보임 */
+            .chat-main { display: none; } /* 내용은 숨김 */
+
+            /* JS로 클래스 토글 시 사용될 스타일 */
+            .chat-sidebar.hidden { display: none; }
+            .chat-main.active { display: flex; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-logo">
+        <span class="material-icons-outlined menu-icon">menu</span>
+        <a href="/" style="text-decoration: none; color: inherit;">D-trip Edu</a>
+    </div>
+    <div class="header-icons">
+        <span class="material-icons-outlined" style="cursor: pointer;" onclick="location.href='/chat'">chat_bubble</span>
+        <span class="material-icons-outlined">person</span>
+    </div>
+</header>
+
+<main class="chat-container">
+
+    <aside class="chat-sidebar" id="chatSidebar">
+        <div class="chat-item" onclick="openChat('김자바 선생님', 1)">
+            <div class="profile-img"></div>
+            <div class="chat-info">
+                <div class="chat-top">
+                    <span class="nickname">김자바 선생님</span>
+                    <span class="time">2시간 전</span>
+                </div>
+                <div class="last-msg">선생님, 다음 수업 시간 조정 가능할까요?</div>
+            </div>
+        </div>
+
+        <div class="chat-item" onclick="openChat('나수학 선생님', 2)">
+            <div class="profile-img" style="background-color: #FFCDD2;"></div>
+            <div class="chat-info">
+                <div class="chat-top">
+                    <span class="nickname">나수학 선생님</span>
+                    <span class="time">1일 전</span>
+                </div>
+                <div class="last-msg">네, 숙제 파일 확인했습니다.</div>
+            </div>
+        </div>
+
+        <div class="chat-item" onclick="openChat('박과학 선생님', 3)">
+            <div class="profile-img" style="background-color: #C8E6C9;"></div>
+            <div class="chat-info">
+                <div class="chat-top">
+                    <span class="nickname">박과학 선생님</span>
+                    <span class="time">4일 전</span>
+                </div>
+                <div class="last-msg">실험 준비물 챙겨오세요~</div>
+            </div>
+        </div>
+    </aside>
+
+    <section class="chat-main" id="chatMain">
+
+        <div id="emptyState" class="empty-state">
+            <svg viewBox="0 0 24 24" class="empty-icon" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M22 2L11 13"></path>
+                <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+            </svg>
+            <div style="font-size: 16px; margin-bottom: 12px;">채팅할 대상을 선택해주세요</div>
+            <button class="empty-btn">새 메시지 작성</button>
+        </div>
+
+        <div id="chatRoomView" class="chat-room-view">
+            <div class="chat-room-header" style="display: flex; align-items: center; gap: 10px;">
+                <span class="material-icons-outlined" style="cursor: pointer; display: none;" id="backBtn" onclick="goBackList()">arrow_back</span>
+                <span id="currentChatName">상대방 이름</span>
+            </div>
+
+            <div class="messages-area">
+                <div class="message-bubble msg-other">안녕하세요! 수업 문의드려요.</div>
+                <div class="message-bubble msg-other">시간 변경 가능할까요?</div>
+                <div class="message-bubble msg-mine">안녕하세요 선생님! 네, 언제가 편하세요?</div>
+                <div class="message-bubble msg-mine">금요일 오후 괜찮습니다.</div>
+            </div>
+
+            <div class="input-area">
+                <input type="text" class="chat-input" placeholder="메세지를 입력하세요...">
+                <button class="btn-send">
+                    <span class="material-icons-outlined" style="font-size: 20px;">send</span>
+                </button>
+            </div>
+        </div>
+
+    </section>
+</main>
+
+<script>
+    function openChat(name, id) {
+        // 1. 활성화 스타일 처리
+        document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        // 2. 화면 전환 (Empty -> Chat)
+        document.getElementById('emptyState').style.display = 'none';
+        document.getElementById('chatRoomView').style.display = 'flex';
+        document.getElementById('currentChatName').innerText = name;
+
+        // 3. 모바일 대응 (목록 숨기기, 채팅 보이기)
+        if (window.innerWidth <= 768) {
+            document.getElementById('chatSidebar').classList.add('hidden');
+            document.getElementById('chatMain').classList.add('active');
+            document.getElementById('backBtn').style.display = 'block'; // 뒤로가기 버튼 표시
+        }
+
+        console.log(`Open Chat ID: ${id}`);
+    }
+
+    function goBackList() {
+        // 모바일에서 목록으로 돌아가기
+        document.getElementById('chatSidebar').classList.remove('hidden');
+        document.getElementById('chatMain').classList.remove('active');
+        document.getElementById('backBtn').style.display = 'none';
+    }
+</script>
+</body>
+</html>
