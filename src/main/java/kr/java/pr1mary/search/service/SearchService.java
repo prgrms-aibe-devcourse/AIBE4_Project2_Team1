@@ -27,8 +27,8 @@ public class SearchService {
     private final SearchRepository searchRepository;
     private final ElasticsearchOperations elasticsearchOperations;
 
+    // 검색
     public Page<LessonDocument> searchWithFilter(String keyword, SearchFilter filter, Pageable pageable) {
-
         Criteria criteria = new Criteria();
 
         // 키워드 조건

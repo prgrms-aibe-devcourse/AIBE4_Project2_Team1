@@ -31,6 +31,7 @@ public class PaymentService {
     @Value("${toss.payment.secret-key}")
     private String secretKey;
 
+    // 결제 승인 요청
     public void processPayment(PaymentConfirmRequest paymentConfirmRequest){
         Booking booking = bookingRepository.findById(paymentConfirmRequest.bookingId())
                 .orElseThrow(() -> new EntityNotFoundException("예약을 찾을 수 없습니다."));
