@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>과외 수정하기</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f1f1f1;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .card h3 {
+            margin: 0 0 12px 0;
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .width-item {
+            width: 100%;
+        }
+
+        textarea {
+            resize: none;
+            height: 120px;
+        }
+
+        .mode-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #fff;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button>←</button>
+            과외 수정하기
+        </div>
+
+        <!-- 기본 정보 -->
+        <div class="card">
+            <h3>[기본 정보]</h3>
+
+            <input type="hidden" id="teacherId" th:value="${teacherId}">
+            <input type="hidden" id="lessonId" th:value="${lesson.getId()}">
+
+            <div class="form-group">
+                <label>수업 제목</label>
+                <input class="width-item" type="text"
+                       th:value="${lesson.getTitle()}"
+                       id="lessonTitle"
+                       maxlength="50"
+                       placeholder="수업 제목을 입력해주세요 (최대 50자)">
+            </div>
+
+            <div class="form-group">
+                <label>과목 선택</label>
+                <label>
+                    <select class="width-item" id="lessonSubjects">
+                        <option value="" disabled>
+                            카테고리를 선택해주세요 (ex. 수학, 영어)
+                        </option>
+                        <option value="MATH" th:selected="${lesson.getSubjects().name()} == 'MATH'">수학</option>
+                        <option value="KOREAN" th:selected="${lesson.getSubjects().name()} == 'KOREAN'">국어</option>
+                        <option value="ENGLISH" th:selected="${lesson.getSubjects().name()} == 'ENGLISH'">영어</option>
+                        <option value="SCIENCE" th:selected="${lesson.getSubjects().name()} == 'HISTORY'">역사</option>
+                        <option value="SCIENCE" th:selected="${lesson.getSubjects().name()} == 'SCIENCE'">과학</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <!-- 판매 정보 -->
+        <div class="card">
+            <h3>[판매 정보]</h3>
+
+            <div class="form-group">
+                <label>수업 방식</label>
+                <div class="mode-group">
+                    <label class="radio-item">
+                        <input type="radio" name="lessonMode" value="ONLINE" th:checked="${lesson.getMode().name()} == 'ONLINE'">
+                        <span>온라인 (Zoom 등)</span>
+                    </label>
+
+                    <label class="radio-item">
+                        <input type="radio" name="lessonMode" value="OFFLINE" th:checked="${lesson.getMode().name()} == 'OFFLINE'">
+                        <span>오프라인 (대면)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>시간당 가격</label>
+                <label>
+                    <input class="width-item" type="number" min="1000" id="lessonPrice"
+                           th:value="${lesson.getPrice()}"
+                           placeholder="가격을 입력해주세요 (최소 1000원)" required>
+                </label>
+            </div>
+        </div>
+
+        <!-- 수업 소개 -->
+        <div class="card">
+            <h3>[수업 소개]</h3>
+
+            <div class="form-group">
+                <label>상세 설명</label>
+                <textarea id="lessonDescription" class="width-item" th:text="${lesson.getDescription()}" maxlength="2000" placeholder="설명부터 수업 방식까지 자세히 적어주세요. 커리큘럼이나 수업 목표를 적으면 학생들의 신청률이 올라갑니다!"></textarea>
+            </div>
+        </div>
+
+        <button onclick="updateLesson()" class="submit-btn">수업 수정 완료</button>
+    </div>
+    <script>
+        async function apiCall(url, options = {}) {
+            try {
+                const res = await fetch(url, {
+                    ...options,
+                    credentials: 'same-origin', // fetch -> cookie를 읽어서 같이 전달해줌
+                    headers: { 'Content-Type': 'application/json', ...options.headers }
+                });
+                const data = await res.json().catch(() => ({}));
+                return { ok: res.ok, data };
+            } catch (e) {
+                return { ok: false, data: {} };
+            }
+        }
+
+        async function updateLesson() {
+            const teacherId = document.getElementById('teacherId').value;
+
+            const result = await apiCall('/api/lessons?teacherId=' + teacherId, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    id: document.getElementById('lessonId').value,
+                    title: document.getElementById('lessonTitle').value,
+                    description: document.getElementById('lessonDescription').value,
+                    subjects: document.getElementById('lessonSubjects').value,
+                    mode: document.querySelector('input[name="lessonMode"]:checked').value,
+                    price: document.getElementById('lessonPrice').value
+                })
+            });
+            if (result.ok) {
+                window.location.href='/'
+            }
+        }
+    </script>
+</body>
+</html>

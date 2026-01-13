@@ -1,171 +1,281 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>새 과외 등록하기</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>새 수업 등록 - D-trip Edu</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
+        /* =========================================
+           Page Specific Styles
+           ========================================= */
+
+        /* 1. Form Container (1200px 내부에서 중앙 정렬될 폼 영역) */
+        .form-wrapper {
+            max-width: 720px; /* 입력 폼은 너무 넓으면 안 예뻐서 제한 */
+            margin: 0 auto;   /* 중앙 정렬 */
+            padding-bottom: 80px;
         }
 
-        body {
-            background: #f1f1f1;
-            margin: 0;
-            padding: 20px;
+        /* 2. Header Area (뒤로가기 + 제목) */
+        .page-header-row {
+            display: flex; align-items: center; gap: 15px;
+            margin: 20px 0 30px 0;
         }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #ffffff;
+        .back-icon {
+            font-size: 28px; cursor: pointer; color: var(--text-primary);
+            transition: color 0.2s;
         }
+        .back-icon:hover { color: var(--primary); }
+        .page-title { font-size: 22px; font-weight: 700; color: var(--text-primary); }
 
-        .header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 16px;
-        }
-
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 16px;
-        }
-
-        .card h3 {
-            margin: 0 0 12px 0;
-            font-size: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            margin-bottom: 6px;
-        }
-
-        input, select, textarea {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-        }
-
-        .width-item {
-            width: 100%;
-        }
-
-        textarea {
-            resize: none;
-            height: 120px;
-        }
-
-        .mode-group {
-            display: flex;
-            gap: 12px;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            border-radius: 8px;
-            border: 1px solid #333;
+        /* 3. Section Card (공통 카드 스타일) */
+        .input-section {
             background: #fff;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
+            border: 1px solid var(--divider);
+            border-radius: var(--border-radius); /* style.css 변수 사용 */
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .section-header {
+            font-size: 18px; font-weight: 700; color: var(--text-primary);
+            margin-bottom: 24px; display: flex; align-items: baseline; gap: 8px;
+        }
+
+        /* 4. Form Elements */
+        .form-group { margin-bottom: 24px; }
+        .form-group:last-child { margin-bottom: 0; }
+
+        .label-row {
+            display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px;
+        }
+        .main-label { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .sub-label { font-size: 12px; color: var(--text-secondary); font-family: sans-serif; }
+
+        .custom-input, .custom-select, .custom-textarea {
+            width: 100%; padding: 14px;
+            border: 1px solid var(--divider);
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #FAFAFA;
+            transition: all 0.2s;
+            box-sizing: border-box; /* style.css의 * { box-sizing: border-box } 상속 */
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .custom-input:focus, .custom-select:focus, .custom-textarea:focus {
+            background-color: #fff;
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px var(--light-primary);
+        }
+        .custom-textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
+
+        /* 5. Radio Buttons (Mode) */
+        .radio-container { display: flex; gap: 12px; }
+        .radio-item { flex: 1; position: relative; }
+        .radio-item input { display: none; }
+
+        .radio-box {
+            display: flex; align-items: center; justify-content: center;
+            padding: 14px;
+            border: 1px solid var(--divider);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--text-secondary);
+            font-weight: 500; cursor: pointer; transition: all 0.2s;
+        }
+
+        .radio-item input:checked + .radio-box {
+            border-color: var(--primary);
+            background-color: #E3F2FD;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* 6. Price Input */
+        .price-wrapper { position: relative; }
+        .unit-text {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--text-secondary); font-size: 14px;
+        }
+
+        /* 7. Submit Button */
+        .submit-area { text-align: right; margin-top: 40px; }
+        .btn-submit {
+            background-color: #fff;
+            border: 2px solid var(--text-primary);
+            color: var(--text-primary);
+            padding: 14px 40px;
+            font-size: 16px; font-weight: 700; border-radius: 8px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-submit:hover {
+            background-color: var(--text-primary);
+            color: #fff;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <button>←</button>
-        새 과외 등록하기
+
+<header>
+    <div class="header-logo">
+        <span class="material-icons-outlined menu-icon">menu</span>
+        <a href="/" style="text-decoration: none; color: inherit;">
+            D-trip Edu
+        </a>
     </div>
 
-    <form th:action="@{/lessons/create}" th:object="${lessonForm}" method="post">
+    <div class="header-icons">
+        <span class="material-icons-outlined" style="cursor: pointer;" onclick="location.href='/chat'">chat_bubble</span>
+        <span class="material-icons-outlined">person</span>
+    </div>
+</header>
 
-        <!-- 기본 정보 -->
-        <div class="card">
-            <h3>[기본 정보]</h3>
+<main class="container">
 
-            <div class="form-group">
-                <label>수업 제목</label>
-                <input class="width-item" type="text"
-                       th:field="*{title}"
-                       maxlength="50"
-                       placeholder="수업 제목을 입력해주세요 (최대 50자)">
-            </div>
+    <div class="form-wrapper">
 
-            <div class="form-group">
-                <label>과목 선택</label>
-                <label>
-                    <select class="width-item" th:field="*{subjects}">
-                        <option value="" disabled selected>
-                            카테고리를 선택해주세요 (ex. 수학, 영어)
-                        </option>
+        <div class="page-header-row">
+            <span class="material-icons-outlined back-icon" onclick="history.back()">arrow_back</span>
+            <h1 class="page-title">새 수업 등록하기</h1>
+        </div>
+
+        <form id="lessonForm" onsubmit="submitLesson(event)">
+            <input type="hidden" id="teacherId" th:value="${teacherId}">
+
+            <section class="input-section">
+                <div class="section-header">[기본 정보]</div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <span class="main-label">과목 선택</span>
+                        <span class="sub-label">Category</span>
+                    </div>
+                    <select id="subjects" class="custom-select" required>
+                        <option value="" disabled selected>카테고리를 선택해주세요 (ex. 수학, 영어)</option>
                         <option value="MATH">수학</option>
                         <option value="KOREAN">국어</option>
                         <option value="ENGLISH">영어</option>
+                        <option value="HISTORY">역사</option>
                         <option value="SCIENCE">과학</option>
                     </select>
-                </label>
-            </div>
-        </div>
-
-        <!-- 판매 정보 -->
-        <div class="card">
-            <h3>[판매 정보]</h3>
-
-            <div class="form-group">
-                <label>수업 방식</label>
-                <div class="mode-group">
-                    <label class="radio-item">
-                        <input type="radio" name="mode" th:field="*{mode}" value="ONLINE" checked>
-                        <span>온라인 (Zoom 등)</span>
-                    </label>
-
-                    <label class="radio-item">
-                        <input type="radio" name="mode" th:field="*{mode}" value="OFFLINE">
-                        <span>오프라인 (대면)</span>
-                    </label>
                 </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <span class="main-label">수업 제목</span>
+                        <span class="sub-label">Title</span>
+                    </div>
+                    <input type="text" id="title" class="custom-input" placeholder="수업 제목을 입력해주세요 (0/50자)" maxlength="50" required>
+                </div>
+            </section>
+
+            <section class="input-section">
+                <div class="section-header">[판매 정보]</div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <span class="main-label">수업 방식</span>
+                        <span class="sub-label">Mode</span>
+                    </div>
+                    <div class="radio-container">
+                        <div class="radio-item">
+                            <input type="radio" name="mode" id="mode_online" value="ONLINE" checked>
+                            <label for="mode_online" class="radio-box">온라인 (Zoom 등)</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="mode" id="mode_offline" value="OFFLINE">
+                            <label for="mode_offline" class="radio-box">오프라인 (대면)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <span class="main-label">시간당 가격</span>
+                        <span class="sub-label">Price</span>
+                    </div>
+                    <div class="price-wrapper">
+                        <input type="number" id="price" class="custom-input" placeholder="가격 입력" min="1000" step="500" required style="padding-right: 80px;">
+                        <span class="unit-text">원 / 시간</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="input-section">
+                <div class="section-header">[수업 소개]</div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <span class="main-label">상세 설명</span>
+                        <span class="sub-label">Description</span>
+                    </div>
+                    <div style="border:1px solid var(--divider); border-bottom:none; background:#f9f9f9; padding:8px; border-radius:8px 8px 0 0; display:flex; gap:10px; color:var(--text-secondary);">
+                        <span class="material-icons-outlined" style="font-size:18px;">format_bold</span>
+                        <span class="material-icons-outlined" style="font-size:18px;">format_italic</span>
+                        <span class="material-icons-outlined" style="font-size:18px;">format_underlined</span>
+                        <span class="material-icons-outlined" style="font-size:18px;">list</span>
+                    </div>
+                    <textarea id="description" class="custom-textarea" style="border-radius:0 0 8px 8px; border-top:1px solid var(--divider);" placeholder="선생님의 수업 방식을 자세히 적어주세요.&#13;&#10;커리큘럼이나 수업 목표를 적으면 학생들의 신청률이 올라갑니다!" required></textarea>
+                </div>
+            </section>
+
+            <div class="submit-area">
+                <button type="submit" class="btn-submit">수업 등록 완료</button>
             </div>
+        </form>
+    </div>
+</main>
 
-            <div class="form-group">
-                <label>시간당 가격</label>
-                <label>
-                    <input class="width-item" type="number" min="1000"
-                           th:field="*{price}"
-                           placeholder="가격을 입력해주세요 (최소 1000원)" required>
-                </label>
-            </div>
-        </div>
+<script>
+    async function submitLesson(event) {
+        event.preventDefault();
 
-        <!-- 수업 소개 -->
-        <div class="card">
-            <h3>[수업 소개]</h3>
+        const teacherId = document.getElementById('teacherId').value;
+        const title = document.getElementById('title').value;
+        const subjects = document.getElementById('subjects').value;
+        const price = document.getElementById('price').value;
+        const description = document.getElementById('description').value;
 
-            <div class="form-group">
-                <label>상세 설명</label>
-                <textarea class="width-item" th:field="*{description}" maxlength="2000" placeholder="설명부터 수업 방식까지 자세히 적어주세요. 커리큘럼이나 수업 목표를 적으면 학생들의 신청률이 올라갑니다!"></textarea>
-            </div>
-        </div>
+        const mode = document.querySelector('input[name="mode"]:checked').value;
 
-        <button type="submit" class="submit-btn">수업 등록 완료</button>
-    </form>
-</div>
+        if (!subjects) {
+            alert("과목을 선택해주세요.");
+            document.getElementById('subjects').focus();
+            return;
+        }
+
+        const requestData = {
+            title: title,
+            subjects: subjects,
+            mode: mode,
+            price: Number(price),
+            description: description
+        };
+
+        try {
+            const response = await axios.post(`/api/lessons?teacherId=${teacherId}`, requestData);
+
+            if (response.status === 200) {
+                alert('수업이 성공적으로 등록되었습니다.');
+                window.location.href = '/lessons/my';
+            }
+        } catch (error) {
+            console.error('등록 실패:', error);
+            const msg = error.response?.data?.message || '알 수 없는 오류가 발생했습니다.';
+            alert('수업 등록에 실패했습니다.\n사유: ' + msg);
+        }
+    }
+</script>
 
 </body>
 </html>

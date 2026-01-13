@@ -1,4 +1,4 @@
-package kr.java.pr1mary.dto.view;
+package kr.java.pr1mary.dto.api.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -6,12 +6,19 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.entity.lesson.Subjects;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class LessonForm {
+@NoArgsConstructor
+@AllArgsConstructor
+public class LessonUpdateRequest {
+    @NotNull
+    private Long id;
+
     @NotBlank(message = "수업 제목은 필수입니다.")
     @Size(max = 50, message = "수업 제목은 50자 이내여야 합니다.")
     private String title;

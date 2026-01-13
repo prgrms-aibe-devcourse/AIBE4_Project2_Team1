@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 사이트명</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #0f5549;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+            border-radius: 6px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .tab.active {
+            background: #0f5549;
+            color: white;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 40px 12px 40px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #0f5549;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            font-size: 18px;
+        }
+
+        .signup-button {
+            width: 100%;
+            padding: 14px;
+            background: #0f5549;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: background 0.3s;
+        }
+
+        .signup-button:hover {
+            background: #0d4a3f;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .social-button {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+
+        .social-button:hover {
+            background: #f9f9f9;
+        }
+
+        .social-icon {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .checkbox-group {
+            margin-bottom: 20px;
+        }
+
+        .checkbox-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .checkbox-options {
+            display: flex;
+            gap: 20px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-option label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .verification-button {
+            background: #f0f9ff;
+            border-color: #0f5549;
+            color: #0f5549;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none; /* Initially hidden */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .modal-close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logo">
+        <div class="logo-icon">📖</div>
+        <div class="logo-text">사이트명</div>
+    </div>
+    <p class="subtitle">과외 매칭 사이트</p>
+
+    <div class="tabs">
+        <a href="login.html" class="tab" th:href="@{/api/login}">로그인</a>
+        <a href="signup.html" class="tab active" th:href="@{/api/signup}">회원가입</a>
+    </div>
+
+    <!-- 회원가입 폼 -->
+    <form id="signupForm" th:action="@{/api/signup}" method="post">
+        <div class="form-group">
+            <label for="email" class="form-label">이메일</label>
+            <div class="input-wrapper">
+                <span class="input-icon">📧</span>
+                <input type="email" id="email" name="email" class="form-input" placeholder="example@email.com" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="form-label">비밀번호</label>
+            <div class="input-wrapper">
+                <span class="input-icon">🔒</span>
+                <input type="password" id="password" name="password" class="form-input" placeholder="········" required>
+                <button type="button" class="toggle-password" onclick="togglePassword('password')">👁</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="username" class="form-label">닉네임</label>
+            <div class="input-wrapper">
+                <span class="input-icon">👤</span>
+                <input type="text" id="username" name="username" class="form-input" placeholder="닉네임을 입력하세요" required>
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <label class="checkbox-label">회원 유형</label>
+            <div class="checkbox-options">
+                <div class="checkbox-option">
+                    <input type="radio" id="student" name="role" value="STUDENT" checked>
+                    <label for="student">학생</label>
+                </div>
+                <div class="checkbox-option">
+                    <input type="radio" id="teacher" name="role" value="TEACHER">
+                    <label for="teacher">선생님</label>
+                </div>
+            </div>
+        </div>
+
+        <div id="teacherVerification" class="hidden">
+            <button type="button" id="openModalButton" class="social-button verification-button">
+                ✓ 선생님 인증
+            </button>
+        </div>
+
+        <!-- 에러 메시지 표시 -->
+        <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+
+        <button type="submit" class="signup-button">회원가입</button>
+
+        <div class="divider">또는</div>
+
+        <div class="social-login">
+            <a class="social-button" th:href="@{/oauth2/authorization/google}">
+                <span class="social-icon" style="color: #4285f4;">G</span>
+                구글로 로그인
+            </a>
+            <a class="social-button" th:href="@{/oauth2/authorization/kakao}">
+                <span class="social-icon">💬</span>
+                카카오로 로그인
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Modal -->
+<div id="teacherModal" class="modal-overlay">
+    <div class="modal-content">
+        <button id="closeModalButton" class="modal-close-button">&times;</button>
+        <p>재학증명서, 졸업증명서를 이메일로 보내주세요</p>
+    </div>
+</div>
+
+<script>
+    const teacherVerification = document.getElementById('teacherVerification');
+    const teacherRadio = document.getElementById('teacher');
+    const studentRadio = document.getElementById('student');
+
+    teacherRadio.addEventListener('change', function() {
+        if (this.checked) {
+            teacherVerification.classList.remove('hidden');
+        }
+    });
+
+    studentRadio.addEventListener('change', function() {
+        if (this.checked) {
+            teacherVerification.classList.add('hidden');
+        }
+    });
+
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        if (input.type === 'password') {
+            input.type = 'text';
+        } else {
+            input.type = 'password';
+        }
+    }
+
+    // Modal script
+    const openModalButton = document.getElementById('openModalButton');
+    const closeModalButton = document.getElementById('closeModalButton');
+    const modalOverlay = document.getElementById('teacherModal');
+
+    openModalButton.addEventListener('click', () => {
+        modalOverlay.style.display = 'flex';
+    });
+
+    closeModalButton.addEventListener('click', () => {
+        modalOverlay.style.display = 'none';
+    });
+
+    modalOverlay.addEventListener('click', (event) => {
+        if (event.target === modalOverlay) {
+            modalOverlay.style.display = 'none';
+        }
+    });
+</script>
+</body>
+</html>

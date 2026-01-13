@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 수업 관리 - D-trip Edu</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        /* =========================================
+           Page Specific Styles (history.html)
+           ========================================= */
+
+        :root {
+            --state-error: #F44336;  /* 취소 상태 */
+            --state-pending: #FF9800; /* 대기 상태 */
+            --bg-card: #ffffff;
+        }
+
+        .history-container { max-width: 800px; margin: 0 auto; }
+
+        /* 탭 스타일 */
+        .tab-container { display: flex; border-bottom: 2px solid var(--divider); margin-bottom: 24px; }
+        .tab-button {
+            flex: 1; padding: 16px; text-align: center; cursor: pointer;
+            font-weight: 500; color: var(--text-secondary); transition: all 0.2s; font-size: 16px;
+        }
+        .tab-button.active { color: var(--primary); border-bottom: 3px solid var(--primary); font-weight: 700; }
+        .tab-button:hover:not(.active) { background-color: rgba(0,0,0,0.02); }
+
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* 리스트 뷰 카드 */
+        .history-card {
+            border: 1px solid var(--divider); border-radius: var(--border-radius);
+            padding: 20px; margin-bottom: 16px; background: var(--bg-card);
+            display: flex; flex-direction: column; gap: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: transform 0.2s;
+        }
+        .history-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .teacher-info { display: flex; align-items: center; gap: 12px; }
+        .teacher-avatar {
+            width: 48px; height: 48px; background-color: var(--light-primary);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: var(--primary);
+        }
+        .lesson-title { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .lesson-meta {
+            font-size: 14px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;
+            margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--divider);
+        }
+        .meta-row { display: flex; align-items: center; gap: 6px; }
+
+        /* 상태 뱃지 (리스트용) */
+        .status-badge {
+            padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #fff; letter-spacing: -0.5px;
+        }
+        .status-PENDING { background-color: var(--state-pending); }
+        .status-CONFIRMED { background-color: var(--primary); }
+        .status-CANCELLED { background-color: var(--state-error); }
+        .status-COMPLETED { background-color: var(--text-secondary); }
+
+        /* 버튼 */
+        .action-buttons { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+        .btn { padding: 8px 16px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; font-size: 13px; font-weight: 500; }
+        .btn-outline { border-color: var(--divider); background: #fff; color: var(--text-primary); }
+        .btn-outline:hover { background-color: #f5f5f5; }
+        .btn-cancel { color: var(--state-error); border-color: var(--state-error); background: #fff; }
+        .btn-cancel:hover { background-color: #ffebee; }
+
+        /* 캘린더 컨테이너 */
+        #calendar { background: #fff; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        /* [추가] 캘린더 상단 범례(Guide) 스타일 */
+        .calendar-legend {
+            display: flex; justify-content: flex-end; gap: 15px; margin-bottom: 10px; font-size: 13px; color: var(--text-secondary);
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+        /* [수정] 캘린더 이벤트 커스텀 스타일 (두 줄 표시 + 점 복구) */
+        .fc-event { cursor: pointer; border: none !important; background: transparent !important; }
+
+        .custom-event-box {
+            display: flex; flex-direction: column;
+            padding: 2px 4px;
+            /* 배경색은 JS에서 주입된 색상의 연한 버전 등을 쓸 수도 있지만, 여기선 투명에 점으로 처리 */
+        }
+
+        .event-time-row {
+            display: flex; align-items: center; gap: 4px; margin-bottom: 2px;
+        }
+
+        /* 사라졌던 점(Dot)을 다시 만듭니다 */
+        .event-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            flex-shrink: 0; /* 찌그러짐 방지 */
+        }
+
+        .event-time { font-size: 0.8em; font-weight: 700; color: var(--text-secondary); white-space: nowrap;}
+        .event-title { font-size: 0.9em; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .fc-toolbar-title { font-size: 1.2rem !important; font-weight: 700; }
+        .fc-button-primary {
+            background-color: var(--accent)
+            !important; border-color: var(--accent) !important;
+        }
+
+        /* 모달 */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+            display: none; justify-content: center; align-items: center; z-index: 1100;
+        }
+        .modal-box {
+            background: #fff; padding: 24px; border-radius: 16px; width: 90%; max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header {
+            font-size: 20px; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid var(--divider); padding-bottom: 15px;
+        }
+        .modal-body p { margin-bottom: 12px; color: var(--text-primary); }
+        .modal-body strong { color: var(--text-secondary); width: 60px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-logo">
+        <span class="material-icons-outlined menu-icon">menu</span>
+        <a href="/" style="text-decoration: none; color: inherit;">
+            D-trip Edu
+        </a>
+    </div>
+
+    <div class="header-icons">
+        <span class="material-icons-outlined" style="cursor: pointer;" onclick="location.href='/chat'">chat_bubble</span>
+        <span class="material-icons-outlined">person</span>
+    </div>
+</header>
+
+<main class="container">
+    <div class="history-container">
+        <div style="margin-bottom: 20px;">
+            <h2 style="font-size: 24px; font-weight: 700; color: var(--text-primary);">내 수업 관리</h2>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-button active" onclick="switchTab('history')">
+                <span class="material-icons-outlined" style="vertical-align:middle; font-size:18px;">list</span>
+                수업 목록
+            </div>
+            <div class="tab-button" onclick="switchTab('timetable')">
+                <span class="material-icons-outlined" style="vertical-align:middle; font-size:18px;">calendar_month</span>
+                시간표
+            </div>
+        </div>
+
+        <div id="view-history" class="view-section active">
+            <div id="history-list-container">
+                <div style="text-align:center; padding: 50px; color:var(--text-secondary);">
+                    <span class="material-icons-outlined" style="font-size:48px; color:#ddd;">hourglass_empty</span>
+                    <p style="margin-top:10px;">데이터를 불러오는 중입니다...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-timetable" class="view-section">
+            <div class="calendar-legend">
+                <div class="legend-item"><span class="legend-dot" style="background: var(--state-pending);"></span>대기</div>
+                <div class="legend-item"><span class="legend-dot" style="background: var(--primary);"></span>확정</div>
+                <div class="legend-item"><span class="legend-dot" style="background: #BDBDBD;"></span>취소/종료</div>
+            </div>
+            <div id="calendar"></div>
+        </div>
+    </div>
+</main>
+
+<div id="bookingModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span id="modalTitle">수업 상세 정보</span>
+            <span class="material-icons-outlined" onclick="closeModal()" style="float:right; cursor:pointer;">close</span>
+        </div>
+        <div class="modal-body">
+            <p><strong>강사</strong> <span id="modalTeacher"></span></p>
+            <p><strong>시간</strong> <span id="modalTime"></span></p>
+            <p><strong>장소</strong> <span id="modalLocation"></span></p>
+            <p><strong>상태</strong> <span id="modalStatus"></span></p>
+            <p><strong>메시지</strong> <span id="modalMessage"></span></p>
+        </div>
+        <div style="margin-top:24px; text-align:right;">
+            <button class="btn btn-outline" onclick="closeModal()">닫기</button>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const STUDENT_ID = [[${studentId}]];
+    /*]]>*/
+
+    let calendar;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!STUDENT_ID) {
+            alert('로그인 정보가 없습니다.');
+            return;
+        }
+        fetchBookings();
+    });
+
+    async function fetchBookings() {
+        try {
+            const response = await axios.get(`/api/bookings/courseHistory?studentId=${STUDENT_ID}`);
+            const bookings = response.data.data;
+
+            renderHistoryList(bookings);
+            initCalendar(bookings);
+        } catch (error) {
+            console.error('데이터 로드 실패:', error);
+            document.getElementById('history-list-container').innerHTML =
+                '<p style="text-align:center; color:var(--state-error);">데이터를 불러오지 못했습니다.</p>';
+        }
+    }
+
+    function renderHistoryList(bookings) {
+        const container = document.getElementById('history-list-container');
+        container.innerHTML = '';
+
+        if(bookings.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center; padding: 40px; color:var(--text-secondary);">
+                    <span class="material-icons-outlined" style="font-size:48px; color:#eee;">event_busy</span>
+                    <p>예약된 수업 내역이 없습니다.</p>
+                </div>`;
+            return;
+        }
+
+        bookings.forEach(booking => {
+            let statusKey = booking.status.split('_')[0];
+            const avatarHtml = `<span class="material-icons">person</span>`;
+
+            const card = `
+                <div class="history-card">
+                    <div class="card-header">
+                        <div class="teacher-info">
+                            <div class="teacher-avatar">${avatarHtml}</div>
+                            <div>
+                                <div style="font-weight:bold; font-size:16px;">${booking.teacherName} 선생님</div>
+                                <div style="font-size:12px; color:var(--text-secondary);">
+                                    <span class="material-icons" style="font-size:12px; color:#FFC107; vertical-align:-2px;">star</span> 4.8
+                                </div>
+                            </div>
+                        </div>
+                        <span class="status-badge status-${statusKey}">${booking.statusKor}</span>
+                    </div>
+
+                    <div style="padding: 0 4px;">
+                        <div class="lesson-title">${booking.lessonTitle}</div>
+                        <div class="lesson-meta">
+                            <div class="meta-row">
+                                <span class="material-icons-outlined" style="font-size:16px;">calendar_today</span>
+                                ${booking.startDate} (${booking.dayOfWeek}) ${booking.startTime} ~ ${booking.endTime}
+                            </div>
+                            <div class="meta-row">
+                                <span class="material-icons-outlined" style="font-size:16px;">videocam</span>
+                                ${booking.location}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-outline">문의하기</button>
+                        ${(booking.status === 'PENDING' || booking.status === 'CONFIRMED')
+                ? `<button class="btn btn-cancel" onclick="cancelBooking(${booking.bookingId})">예약 취소</button>`
+                : ''}
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', card);
+        });
+    }
+
+    // ============================================
+    //  캘린더 설정 (점 복구 & 2줄 표시)
+    // ============================================
+    function initCalendar(bookings) {
+        const calendarEl = document.getElementById('calendar');
+
+        const rootStyles = getComputedStyle(document.documentElement);
+        const colorPrimary = rootStyles.getPropertyValue('--primary').trim();
+        const colorPending = rootStyles.getPropertyValue('--state-pending').trim();
+        const colorCancel = '#BDBDBD';
+
+        const events = bookings.map(b => {
+            let color = colorPrimary;
+            if(b.status === 'PENDING') color = colorPending;
+            if(b.status.includes('CANCEL') || b.status === 'REJECTED') color = colorCancel;
+
+            return {
+                id: b.bookingId,
+                title: `${b.teacherName}`, // 선생님 이름
+                start: `${b.startDate}T${b.startTime}`,
+                end: `${b.startDate}T${b.endTime}`,
+                backgroundColor: color, // 이 색상을 JS에서 읽어서 점 색깔로 씁니다.
+                borderColor: color,
+                extendedProps: b
+            };
+        });
+
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'ko',
+            height: 'auto',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,listWeek'
+            },
+
+            buttonText: {
+                today: 'Today',
+                month: 'Month',
+                list: 'List' },
+            dayMaxEvents: true,
+            height: 'auto',
+
+            // [핵심 수정] 2줄 표시 + 색깔 점(Dot) 수동 렌더링
+            eventContent: function(arg) {
+                let color = arg.event.backgroundColor; // 이벤트에 할당된 색상 가져오기
+                let timeText = arg.timeText || '';     // 시간 (예: 14:00)
+
+                return {
+                    html: `
+                        <div class="custom-event-box">
+                            <div class="event-time-row">
+                                <span class="event-dot" style="background-color: ${color};"></span>
+                                <span class="event-time">${timeText}</span>
+                            </div>
+                            <div class="event-title">${arg.event.title}</div>
+                        </div>
+                    `
+                };
+            },
+
+            events: events,
+            eventClick: function(info) {
+                openModal(info.event.extendedProps);
+            }
+        });
+    }
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-button').forEach(t => t.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById('view-' + tabName).classList.add('active');
+
+        if(tabName === 'timetable' && calendar) {
+            setTimeout(() => {
+                calendar.render();
+                calendar.updateSize();
+            }, 100);
+        }
+    }
+
+    function openModal(data) {
+        document.getElementById('modalTitle').innerText = data.lessonTitle;
+        document.getElementById('modalTeacher').innerText = data.teacherName;
+        document.getElementById('modalTime').innerText = `${data.startDate} ${data.startTime} ~ ${data.endTime}`;
+        document.getElementById('modalLocation').innerText = data.location;
+        document.getElementById('modalStatus').innerText = data.statusKor;
+        const statusSpan = document.getElementById('modalStatus');
+        statusSpan.className = 'status-badge status-' + data.status.split('_')[0];
+        document.getElementById('modalMessage').innerText = data.requestMessage || '-';
+        document.getElementById('bookingModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('bookingModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('bookingModal')) {
+            closeModal();
+        }
+    }
+
+    async function cancelBooking(bookingId) {
+        if(!confirm('정말로 이 예약을 취소하시겠습니까?\n취소 후에는 복구가 불가능합니다.')) return;
+        try {
+            await axios.patch(`/api/bookings/${bookingId}/cancel-student?studentId=${STUDENT_ID}`);
+            alert('예약이 정상적으로 취소되었습니다.');
+            fetchBookings();
+        } catch (e) {
+            console.error(e);
+            alert('취소 처리에 실패했습니다.');
+        }
+    }
+</script>
+
+</body>
+</html>

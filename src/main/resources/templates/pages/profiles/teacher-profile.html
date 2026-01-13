@@ -104,18 +104,18 @@
 
 <div class="container">
     <aside class="sidebar">
-        <img th:src="@{/images/profile-placeholder.png}" class="profile-img" alt="프로필">
+        <img th:src="@{'/teacherImage/' + profile.imageUrl}" class="profile-img" alt="프로필">
 
-        <h2 class="teacher-name" th:text="${teacher.name}">이선생</h2>
+        <h2 class="teacher-name" th:text="${profile.user.name}">이선생</h2>
         <p class="teacher-email">
-            <i class="far fa-envelope"></i> <span th:text="${teacher.email}">teacher@email.com</span>
+            <i class="far fa-envelope"></i> <span th:text="${profile.user.email}">teacher@email.com</span>
         </p>
         <p class="teacher-loc">
-            <i class="fas fa-map-marker-alt"></i> <span th:text="${teacher.location}">서울시 강남구</span>
+            <i class="fas fa-map-marker-alt"></i> <span th:text="${profile.regionCode}">서울시 강남구</span>
         </p>
 
-        <button class="btn-outline">공개 프로필 보기</button>
-        <button class="btn-outline">프로필 편집</button>
+        <button class="btn-outline" th:onclick="|location.href='@{/profile/teacher/public(id=%{profile.user.id})}'|">공개 프로필 보기</button>
+        <button class="btn-outline" th:onclick="|location.href='@{/profile/teacher/update(id=%{profile.user.id})}'|">프로필 편집</button>
 
         <div class="menu-section">
             <div class="menu-title">관리 메뉴</div>
@@ -134,7 +134,7 @@
 
     <main class="main-content">
         <div class="greeting">
-            👋 반가워요, <span th:text="${teacher.name}">이선생</span>님!
+            👋 반가워요, <span th:text="${profile.user.name}">이선생</span>님!
         </div>
 
         <section>
@@ -142,15 +142,15 @@
             <div class="dashboard-grid">
                 <div class="card">
                     <div class="card-label">💰 예상수익</div>
-                    <div class="card-value" th:text="${#numbers.formatInteger(stats.expectedIncome, 0, 'COMMA') + '원'}">358,000원</div>
+                    <div class="card-value" th:text="${profit}원">358,000원</div>
                 </div>
                 <div class="card">
                     <div class="card-label">⭐ 평점</div>
-                    <div class="card-value" th:text="${stats.rating + ' / 5.0'}">4.8 / 5.0</div>
+                    <div class="card-value" th:text="${average + ' / 5.0'}">4.8 / 5.0</div>
                 </div>
                 <div class="card">
                     <div class="card-label">📩 새 요청</div>
-                    <div class="card-value" th:text="${stats.newRequests + '건'}">2건</div>
+                    <div class="card-value" th:text="${bookings.size() + '건'}">2건</div>
                 </div>
             </div>
         </section>
@@ -158,18 +158,18 @@
         <section>
             <h3 class="section-title"><i class="fas fa-bell"></i> 예약 요청 관리</h3>
             <div class="request-grid">
-                <div class="req-card" th:each="req : ${requests}">
-                    <div class="req-name" th:text="${req.studentName + ' (' + req.subject + ')'}">XXX 학생 (영어)</div>
+                <div class="req-card" th:each="book : ${bookings}">
+                    <div class="req-name" th:text="${book.student.name + ' (' + book.lesson.subjects + ')'}">XXX 학생 (영어)</div>
                     <div class="req-info">
                         <i class="far fa-calendar-check"></i>
-                        <span th:text="${req.requestDateStr}">12월 25일 14:00 신청</span>
+                        <span th:text="${book.schedule.startTime}">12월 25일 14:00 신청</span>
                     </div>
                     <div class="req-actions">
                         <a href="#" class="req-accept">수락</a> |
                         <a href="#" class="req-reject">거절</a>
                     </div>
                 </div>
-                <div class="req-card" th:if="${requests == null or requests.isEmpty()}">
+                <div class="req-card" th:if="${bookings == null or bookings.isEmpty()}">
                     <div class="req-name">요청이 없습니다.</div>
                 </div>
             </div>
@@ -178,11 +178,12 @@
         <section>
             <h3 class="section-title"><i class="fas fa-book-open"></i> 내 수업 목록</h3>
             <div class="class-list-container">
-                <div class="class-item" th:each="cls : ${classes}">
-                        <span class="status-tag"
-                              th:classappend="${cls.active} ? 'status-on' : 'status-off'"
-                              th:text="${cls.active} ? 'ON' : 'OFF'">ON</span>
-                    <span th:text="${cls.title}">원리 탐구 과학</span>
+                <div class="class-item" th:each="l : ${lessons}">
+<!--                        <span class="status-tag"-->
+<!--                              th:classappend="${cls.active} ? 'status-on' : 'status-off'"-->
+<!--                              th:text="${cls.active} ? 'ON' : 'OFF'">ON</span>-->
+
+                    <span th:text="${l.title}">원리 탐구 과학</span>
                     <span class="edit-link">[수정]</span>
                 </div>
             </div>

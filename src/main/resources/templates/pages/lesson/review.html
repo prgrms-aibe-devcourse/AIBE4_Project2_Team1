@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 작성 - 김학생</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        /* 왼쪽 사이드바 (기존 유지) */
+        .profile-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 30px 20px;
+            text-align: center;
+            height: fit-content;
+            border: 1px solid var(--divider);
+        }
+        .profile-img-circle {
+            width: 100px; height: 100px;
+            background: #e0e0e0; border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* 리뷰 작성 폼 스타일 */
+        .review-form-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            border: 1px solid var(--divider);
+        }
+
+        /* 수강 정보 요약 박스 */
+        .course-summary {
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .course-summary .badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        /* 별점 스타일 */
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .star-rating input { display: none; }
+        .star-rating label {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+        }
+        .star-rating :checked ~ label { color: #fbc02d; }
+        .star-rating label:hover,
+        .star-rating label:hover ~ label { color: #fbc02d; }
+
+        .form-group { margin-bottom: 25px; }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--divider);
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-submit {
+            flex: 2;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            flex: 1;
+            background-color: var(--white);
+            border: 1px solid var(--divider);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-logo">
+        <span class="menu-icon">☰</span> 로고
+    </div>
+    <div class="header-icons">
+        <span>🔔</span>
+        <span>💬</span>
+    </div>
+</header>
+
+<div class="container">
+    <div class="content-wrapper">
+        <aside class="profile-card">
+            <div class="profile-img-circle">👤</div>
+            <div class="profile-info">
+                <h2 th:text="${student.user.name}"></h2>
+                <p th:text="${student.user.email}"></p>
+            </div>
+            <div class="side-btns" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+<!--                <button class="btn-side" style="padding: 10px; border-radius: 20px; border: 1px solid var(&#45;&#45;text-primary); background: var(&#45;&#45;white);">프로필 편집</button>-->
+<!--                <button class="btn-side" style="padding: 10px; border-radius: 20px; border: 1px solid var(&#45;&#45;text-primary); background: var(&#45;&#45;white);" onclick="location.href='/mypage'">마이페이지</button>-->
+            </div>
+        </aside>
+
+        <main>
+            <div class="review-form-card">
+                <h1 style="margin-bottom: 10px; font-size: 1.6rem;">수업 리뷰 작성</h1>
+<!--                <p style="color: var(&#45;&#45;text-secondary); margin-bottom: 30px;">수업은 어떠셨나요? 선생님과 다른 학생들에게 소중한 경험을 나눠주세요.</p>-->
+
+                <div class="course-summary">
+                    <div style="width: 50px; height: 50px; background: #ddd; border-radius: 8px;"></div>
+                    <div>
+                        <span class="badge">수강 완료</span>
+                        <p style="font-weight: bold; margin-top: 4px;">세상과 소통하는 즐거움, 자신감 영어</p>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">XXX 선생님 | 20XX.XX.XX 수강</p>
+                    </div>
+                </div>
+
+                <form th:action="@{/review}" method="post">
+
+                    <div class="form-group">
+                        <label for="userId" style="display: inline-block;">회원번호</label>
+                        <input id="userId" name="userId" th:value="${review.userId ?: userId}" readonly></input>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lessonId" style="display: inline-block;">수업번호</label>
+                        <input id="lessonId" name="lessonId" th:value="${review.lessonId ?: lessonId}" readonly></input>
+                    </div>
+
+                    <div class="form-group">
+                        <label>수업 만족도</label>
+                        <div id="rating" class="star-rating">
+                            <input type="radio" id="5-stars" name="rating" value="5" />
+                            <label for="5-stars">★</label>
+                            <input type="radio" id="4-stars" name="rating" value="4" />
+                            <label for="4-stars">★</label>
+                            <input type="radio" id="3-stars" name="rating" value="3" />
+                            <label for="3-stars">★</label>
+                            <input type="radio" id="2-stars" name="rating" value="2" />
+                            <label for="2-stars">★</label>
+                            <input type="radio" id="1-star" name="rating" value="1" />
+                            <label for="1-star">★</label>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">별을 클릭하여 점수를 선택해주세요.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">상세 후기</label>
+                        <textarea id="content" name="content" placeholder="선생님의 강의 스타일, 수업 내용, 도움이 된 점 등을 자유롭게 적어주세요."></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn-cancel" onclick="history.back()">취소</button>
+                        <button type="submit" class="btn-submit">리뷰 등록하기</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer-info">
+        <div class="footer-links">
+            <span>이용약관</span> | <span>개인정보처리방침</span> | <span>고객센터</span>
+        </div>
+        <p class="copyright">© 2026 My Study Platform. All rights reserved.</p>
+    </footer>
+</div>
+
+</body>
+</html>

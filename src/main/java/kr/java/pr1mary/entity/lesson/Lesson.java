@@ -1,7 +1,8 @@
 package kr.java.pr1mary.entity.lesson;
 
 import jakarta.persistence.*;
-import kr.java.pr1mary.dto.view.LessonForm;
+import kr.java.pr1mary.dto.api.request.LessonRequest;
+import kr.java.pr1mary.dto.api.request.LessonUpdateRequest;
 import kr.java.pr1mary.entity.BaseEntity;
 import kr.java.pr1mary.entity.user.User;
 import lombok.Getter;
@@ -40,16 +41,24 @@ public class Lesson extends BaseEntity {
         ONLINE, OFFLINE
     }
 
-    public static Lesson create(LessonForm lessonForm, User user) {
+    public static Lesson create(LessonRequest lessonRequest, User user) {
         Lesson board = new Lesson();
         board.user = user;
-        board.title = lessonForm.getTitle();
-        board.description = lessonForm.getDescription();
-        board.subjects = lessonForm.getSubjects();
-        board.mode = lessonForm.getMode();
-        board.price = lessonForm.getPrice();
+        board.title = lessonRequest.getTitle();
+        board.description = lessonRequest.getDescription();
+        board.subjects = lessonRequest.getSubjects();
+        board.mode = lessonRequest.getMode();
+        board.price = lessonRequest.getPrice();
         board.averageRating = 0.0;
 
         return board;
+    }
+
+    public void update(LessonUpdateRequest lessonUpdateRequest){
+        this.title = lessonUpdateRequest.getTitle();
+        this.description = lessonUpdateRequest.getDescription();
+        this.subjects = lessonUpdateRequest.getSubjects();
+        this.mode = lessonUpdateRequest.getMode();
+        this.price = lessonUpdateRequest.getPrice();
     }
 }

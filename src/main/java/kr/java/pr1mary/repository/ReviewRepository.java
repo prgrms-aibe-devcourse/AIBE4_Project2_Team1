@@ -20,4 +20,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // 학생이 작성한 모든 리뷰 불러오기
     @Query("SELECT r FROM Review r WHERE r.user.id = :studentId")
     List<Review> findByStudentId(@Param("studentId") Long studentId);
+
+    // 학생이 수업에 작성한 리뷰 불러오기
+    @Query("SELECT r FROM Review r WHERE r.user.id = :studentId AND r.lesson.id = :lessonId")
+    Review findByStudentIdAndLessonId(@Param("studentId") Long studentId, @Param("teacherId") Long teacherId);
 }

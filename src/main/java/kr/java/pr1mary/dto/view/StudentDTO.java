@@ -1,7 +1,5 @@
 package kr.java.pr1mary.dto.view;
 
-import kr.java.pr1mary.entity.user.StudentProfile;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;

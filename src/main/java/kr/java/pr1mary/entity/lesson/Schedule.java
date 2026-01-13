@@ -19,6 +19,10 @@ public class Schedule {
     @JoinColumn(name = "teacher_id")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "lesson_id")
+    private Lesson lesson;
+
     @Column(nullable = false)
     private LocalDateTime startTime;
 
