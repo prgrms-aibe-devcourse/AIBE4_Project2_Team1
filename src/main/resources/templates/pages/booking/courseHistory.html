@@ -112,7 +112,10 @@
         .event-title { font-size: 0.9em; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .fc-toolbar-title { font-size: 1.2rem !important; font-weight: 700; }
-        .fc-button-primary { background-color: var(--primary) !important; border-color: var(--primary) !important; }
+        .fc-button-primary {
+            background-color: var(--accent)
+            !important; border-color: var(--accent) !important;
+        }
 
         /* 모달 */
         .modal-overlay {
@@ -326,6 +329,13 @@
                 center: 'title',
                 right: 'dayGridMonth,listWeek'
             },
+
+            buttonText: {
+                today: 'Today',
+                month: 'Month',
+                list: 'List' },
+            dayMaxEvents: true,
+            height: 'auto',
 
             // [핵심 수정] 2줄 표시 + 색깔 점(Dot) 수동 렌더링
             eventContent: function(arg) {
