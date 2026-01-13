@@ -47,16 +47,4 @@ public class BookingViewController {
         // 2. 리턴하는 파일 이름
         return "pages/booking/courseHistory";
     }
-
-    // 결제 성공 페이지
-    @GetMapping("/success")
-    public String successPage() {
-        return "booking-success";
-    }
-
-    // 결제 실패 페이지
-    @GetMapping("/fail")
-    public String failPage() {
-        return "booking-fail";
-    }
 }

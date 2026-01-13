@@ -18,25 +18,25 @@ public class LessonApiController {
 
     // 과외 생성
     @PostMapping
-    public ResponseEntity<LessonResponse> create(@Valid @RequestBody LessonRequest lessonRequest) {
-        // TODO: userId 가져오기
-        return ResponseEntity.status(HttpStatus.CREATED).body(lessonService.saveLesson(lessonRequest, 1L));
+    public ResponseEntity<LessonResponse> create(@Valid @RequestBody LessonRequest lessonRequest,
+                                                 @RequestParam Long teacherId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(lessonService.saveLesson(lessonRequest, teacherId));
     }
 
     // 과외 수정
     @PutMapping
-    public ResponseEntity<Void> updateLesson(@Valid @RequestBody LessonUpdateRequest lessonUpdateRequest){
-        // TODO: userId 가져오기
-        lessonService.updateLesson(lessonUpdateRequest, 1L);
+    public ResponseEntity<Void> updateLesson(@Valid @RequestBody LessonUpdateRequest lessonUpdateRequest,
+                                             @RequestParam Long teacherId){
+        lessonService.updateLesson(lessonUpdateRequest, teacherId);
 
         return ResponseEntity.noContent().build();
     }
 
     // 과외 삭제
     @DeleteMapping("/{lessonId}")
-    public ResponseEntity<Void> deleteLesson(@PathVariable Long lessonId){
-        // TODO: userId 가져오기
-        lessonService.deleteLesson(lessonId, 1L);
+    public ResponseEntity<Void> deleteLesson(@PathVariable Long lessonId,
+                                             @RequestParam Long teacherId){
+        lessonService.deleteLesson(lessonId, teacherId);
 
         return ResponseEntity.noContent().build();
     }
