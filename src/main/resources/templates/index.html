@@ -1,19 +1,273 @@
-<!doctype html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>과외 매칭 - 당신의 성장을 함께합니다</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        /* --- 히어로 섹션 --- */
+        .hero-section {
+            width: 100%;
+            height: 280px;
+            background-color: var(--light-primary);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 24px;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .hero-section img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- 검색 영역 --- */
+        .search-section {
+            background-color: var(--white);
+            padding: 24px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--divider);
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .search-box { display: flex; gap: 12px; }
+        .search-input-wrapper { flex: 1; position: relative; display: flex; align-items: center; }
+        .search-icon { position: absolute; left: 16px; color: var(--divider); }
+        .search-input {
+            width: 100%; padding: 14px 14px 14px 48px;
+            border: 1px solid var(--divider); border-radius: 8px;
+            background-color: #f9f9f9; outline: none; font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .search-input:focus { border-color: var(--primary); background-color: var(--white); }
+        .search-btn {
+            padding: 0 32px; background-color: var(--primary); color: white; border: none;
+            border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .search-btn:hover { background-color: var(--primary-dark); }
+
+        .tags { margin-top: 16px; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+        .tag-label { font-weight: 700; margin-right: 8px; }
+        .tag {
+            color: var(--text-secondary); background-color: #f5f5f5;
+            padding: 6px 14px; border-radius: 20px; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .tag:hover { background-color: #e0e0e0; }
+
+        /* --- 섹션 공통 --- */
+        section { margin-bottom: 40px; }
+        .section-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px; padding-right: 4px;
+        }
+        .section-title { font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--text-primary); }
+        .view-all { font-size: 0.95rem; color: var(--text-secondary); text-decoration: none; font-weight: 500; }
+
+        /* --- 가로 스크롤 컨테이너 --- */
+        .horizontal-scroll-container {
+            display: flex; flex-wrap: nowrap; overflow-x: auto;
+            gap: 20px;
+            padding-bottom: 10px;
+            cursor: grab;
+            -ms-overflow-style: none; scrollbar-width: none;
+        }
+        .horizontal-scroll-container::-webkit-scrollbar { display: none; }
+        .horizontal-scroll-container.active { cursor: grabbing; transform: scale(1); }
+
+        /* --- 카드 공통 스타일 --- */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--divider);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--primary); }
+
+        /* 인기 수업 카드 */
+        .class-card { width: 280px; }
+        .class-card-header { display: flex; gap: 16px; margin-bottom: 16px; }
+        .teacher-img-placeholder { width: 56px; height: 56px; background-color: #e0e0e0; border-radius: 8px; }
+        .teacher-info-text { display: flex; flex-direction: column; justify-content: center; }
+        .subject-badge { font-size: 0.8rem; color: var(--primary); font-weight: 700; margin-bottom: 4px; }
+        .teacher-name { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); }
+        .rating-badge { display: flex; align-items: center; font-size: 0.85rem; font-weight: 700; margin-top: 4px; }
+        .star-icon { color: #FFC107; font-size: 0.9rem; margin-right: 2px; }
+        .class-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+        .class-time { font-size: 0.85rem; color: var(--text-secondary); }
+
+        /* 신규 선생님 카드 */
+        .teacher-card { width: 180px; text-align: center; }
+        .teacher-card-img { width: 100%; aspect-ratio: 1/1; background-color: #e0e0e0; border-radius: var(--border-radius); margin-bottom: 16px; }
+        .region-text { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px; }
+        .teacher-subject { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+
+        /* 후기 카드 */
+        .review-card { width: 280px; display: flex; flex-direction: column; justify-content: space-between; background-color: var(--white); }
+        .review-header { font-size: 0.9rem; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
+        .review-content { font-size: 0.95rem; line-height: 1.6; color: #424242; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* 배너 */
+        .cta-banner { width: 100%; border-radius: var(--border-radius); overflow: hidden; margin-top: 20px; }
+        .cta-banner img { width: 100%; height: auto; display: block; }
+    </style>
 </head>
 <body>
-<h1>Hello!</h1>
-<p>어드민 : admin / admin1234</p>
-<p>유저 : user1 / user1234</p>
-<h2>어드민</h2>
-<a href="/admin">어드민 페이지로 이동</a>
-<a href="/admin/console">어드민 콘솔</a>
-<h2>공용</h2>
-<a href="/chat">채팅으로 이동</a>
-<a href="/notifications/sse">SSE 구독</a>
 
+<header>
+    <div class="header-logo">
+        <span class="material-icons-outlined menu-icon">menu</span>
+        <a href="/" style="text-decoration: none; color: inherit;">
+            D-trip Edu
+        </a>
+    </div>
+
+    <div class="header-icons">
+        <span class="material-icons-outlined" style="cursor: pointer;" onclick="location.href='/chat'">chat_bubble</span>
+        <span class="material-icons-outlined">person</span>
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="hero-section">
+        <img th:src="@{/images/hero-banner.png}" alt="메인 배너">
+    </div>
+
+    <div class="search-section">
+        <form action="/search" method="get" class="search-box" onsubmit="return validateSearch()">
+            <div class="search-input-wrapper">
+                <span class="material-icons-outlined search-icon">search</span>
+                <input type="text" id="searchInput" name="keyword" class="search-input" placeholder="어떤 수업을 찾으세요?">
+            </div>
+            <button type="submit" class="search-btn">검색</button>
+        </form>
+        <div class="tags">
+            <span class="tag-label">추천 태그</span>
+            <span class="tag"># 국어</span>
+            <span class="tag"># 수학</span>
+            <span class="tag"># 영어</span>
+            <span class="tag"># 코딩</span>
+        </div>
+    </div>
+
+    <section>
+        <div class="section-header">
+            <div class="section-title">
+                <span>🔥</span> 지금 가장 핫한 인기 수업
+            </div>
+        </div>
+        <div class="horizontal-scroll-container">
+            <div class="card class-card" th:each="num : ${#numbers.sequence(1, 6)}">
+                <div class="class-card-header">
+                    <div class="teacher-img-placeholder"></div>
+                    <div class="teacher-info-text">
+                        <span class="subject-badge">수학</span>
+                        <span class="teacher-name">김경현 선생님</span>
+                    </div>
+                </div>
+                <div class="class-title">고등 수학(상) 완벽 마스터 클래스</div>
+                <div class="rating-badge">
+                    <span class="material-icons star-icon">star</span> 4.8
+                </div>
+                <div class="class-time" style="margin-top:8px;">18:00 ~ 20:00</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-header">
+            <div class="section-title">
+                <span>✨</span> 새로 오신 선생님을 소개합니다
+            </div>
+        </div>
+        <div class="horizontal-scroll-container">
+            <div class="card teacher-card" th:each="num : ${#numbers.sequence(1, 8)}">
+                <div class="teacher-card-img"></div>
+                <div class="region-text">서울 강남구</div>
+                <div class="teacher-subject">영어 회화</div>
+                <div class="teacher-name-sm">이선생님</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-header">
+            <div class="section-title">
+                <span>🏆</span> 수강생 리얼 후기
+            </div>
+        </div>
+        <div class="horizontal-scroll-container">
+            <div class="card review-card" th:each="num : ${#numbers.sequence(1, 5)}">
+                <div class="review-header">
+                    <strong>국어 논술</strong> <span>| 박선생님</span>
+                </div>
+                <p class="review-content">"선생님 덕분에 막막했던 논술에 자신감이 생겼어요! 첨삭도 꼼꼼하게 해주시고 입시 상담까지 너무 감사합니다. 다음 달도 재수강 예정입니다!"</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="cta-banner">
+        <img th:src="@{/images/cta-banner.png}" alt="하단 배너">
+    </div>
+
+    <footer class="footer-info">
+        <div class="footer-links">
+            <span>사업자 정보</span> | <span>이용 약관</span> | <span>개인정보처리방침</span> | <span>고객센터</span>
+        </div>
+        <p class="copyright">© 2026 과외 매칭 시스템 D-trip Edu</p>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const sliders = document.querySelectorAll('.horizontal-scroll-container');
+        sliders.forEach(slider => {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.classList.add('active');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+            slider.addEventListener('mouseleave', () => {
+                isDown = false;
+                slider.classList.remove('active');
+            });
+            slider.addEventListener('mouseup', () => {
+                isDown = false;
+                slider.classList.remove('active');
+            });
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 2;
+                slider.scrollLeft = scrollLeft - walk;
+            });
+        });
+    });
+
+    function validateSearch() {
+        const input = document.getElementById('searchInput');
+        if(input.value.trim() === "") {
+            alert("검색어를 입력해주세요!");
+            input.focus();
+            return false;
+        }
+        alert("'" + input.value + "' 검색 결과 페이지로 이동합니다. (구현 예정)");
+        return false;
+    }
+</script>
 </body>
 </html>
