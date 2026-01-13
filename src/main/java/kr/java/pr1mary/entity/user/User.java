@@ -38,4 +38,22 @@ public class User extends BaseEntity {
     public enum Auth {
         LOCAL, GOOGLE, KAKAO
     }
+
+    public User(String email, String password, String name, Role role, Auth auth) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.role = role;
+        this.auth = auth;
+    }
+
+    // OAuth2 회원가입용 생성자
+    public User(String email, String name, Role role, Auth auth) {
+        this.email = email;
+        // OAuth2 사용자는 비밀번호 없음
+        this.password = "";
+        this.name = name;
+        this.role = role;
+        this.auth = auth;
+    }
 }
