@@ -98,6 +98,7 @@
         <div class="card">
             <h3>[기본 정보]</h3>
 
+            <input type="hidden" id="teacherId" th:value="${teacherId}">
             <input type="hidden" id="lessonId" th:value="${lesson.getId()}">
 
             <div class="form-group">
@@ -183,7 +184,9 @@
         }
 
         async function updateLesson() {
-            const result = await apiCall('/api/lessons', {
+            const teacherId = document.getElementById('teacherId').value;
+
+            const result = await apiCall('/api/lessons?teacherId=' + teacherId, {
                 method: 'PUT',
                 body: JSON.stringify({
                     id: document.getElementById('lessonId').value,
