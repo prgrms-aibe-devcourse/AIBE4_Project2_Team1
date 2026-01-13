@@ -46,7 +46,7 @@ public class SignupController {
             @RequestParam Role role,
             Model model) {
         try {
-            signupService.signup(email, username, password, role);
+            signupService.signup(email, password, username, role);
             return "redirect:/api/login?signup=success";
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());

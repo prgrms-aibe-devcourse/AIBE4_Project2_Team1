@@ -9,26 +9,21 @@ import kr.java.pr1mary.dto.api.request.LessonRequest;
 import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.entity.lesson.Subjects;
 import kr.java.pr1mary.entity.user.TeacherProfile;
-import kr.java.pr1mary.entity.user.User;
 import kr.java.pr1mary.repository.TeacherProfileRepository;
 import kr.java.pr1mary.repository.UserRepository;
 import kr.java.pr1mary.search.service.SearchService;
 import kr.java.pr1mary.service.LessonService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
     private final UserAccountRepository userAccountRepository;
     private final PasswordEncoder passwordEncoder;
-@Slf4j
-public class DataInitializer implements CommandLineRunner {
-
     private final UserRepository userRepository;
     private final LessonService lessonService;
     private final TeacherProfileRepository teacherProfileRepository;
