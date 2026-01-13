@@ -1,15 +1,18 @@
 package kr.java.pr1mary.service;
 
 import kr.java.pr1mary.dto.view.ReviewDTO;
+import kr.java.pr1mary.entity.lesson.Booking;
 import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.entity.user.Review;
 import kr.java.pr1mary.entity.user.User;
+import kr.java.pr1mary.repository.BookingRepository;
 import kr.java.pr1mary.repository.LessonRepository;
 import kr.java.pr1mary.repository.ReviewRepository;
 import kr.java.pr1mary.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -19,6 +22,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final LessonRepository lessonRepository;
+    private final BookingRepository bookingRepository;
 
     // 리뷰 저장
     public void saveReview(ReviewDTO dto) {
@@ -42,9 +46,14 @@ public class ReviewService {
         return reviewRepository.findByTeacherId(teacherId).stream().map(this::toDTO).toList();
     }
 
-    // 교사에게 작성된 리뷰 불러오기
+    // 학생이 작성한 리뷰 불러오기
     public List<ReviewDTO> loadReviewByStudent(Long studentId) {
         return reviewRepository.findByStudentId(studentId).stream().map(this::toDTO).toList();
+    }
+
+    // 학생이 수업에 작성한 리뷰 불러오기
+    public ReviewDTO loadReviewByStudentAndLesson(Long studentId, Long lessonId) {
+        return toDTO(reviewRepository.findByStudentIdAndLessonId(studentId, lessonId));
     }
 
     private ReviewDTO toDTO(Review review) {

@@ -2,13 +2,14 @@ package kr.java.pr1mary.service;
 
 import kr.java.pr1mary.dto.view.StudentDTO;
 import kr.java.pr1mary.dto.view.TeacherDTO;
+import kr.java.pr1mary.entity.lesson.Booking;
+import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.entity.lesson.Subject;
+import kr.java.pr1mary.entity.user.Review;
 import kr.java.pr1mary.entity.user.StudentProfile;
 import kr.java.pr1mary.entity.user.TeacherProfile;
 import kr.java.pr1mary.entity.user.User;
-import kr.java.pr1mary.repository.StudentProfileRepository;
-import kr.java.pr1mary.repository.SubjectRepository;
-import kr.java.pr1mary.repository.TeacherProfileRepository;
+import kr.java.pr1mary.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -26,6 +28,10 @@ import java.util.UUID;
 public class TeacherProfileService {
     private final TeacherProfileRepository teacherProfileRepository;
     private final SubjectRepository subjectRepository;
+    private final ReviewRepository reviewRepository;
+    private final LessonRepository lessonRepository;
+    private final BookingRepository bookingRepository;
+
 
     @Value("${file.path-teacher}")
     private String teacherPath;
@@ -69,5 +75,26 @@ public class TeacherProfileService {
     // 교사 id로 교사 정보 불러오기
     public TeacherProfile getProfileByTeacherId(Long id) {
         return teacherProfileRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 사용자를 찾을 수 없음"));
+    }
+
+    // 리뷰 평점 가져오기
+    public Double getAverageRating(Long teacherId) {
+        List<Review> reviews = reviewRepository.findByTeacherId(teacherId);
+        double sum = 0.0, count = 0.0;
+        for (Review review : reviews) {
+            sum += review.getRating();
+            count++;
+        }
+        return count == 0.0 ? 0.0 : sum / count;
+    }
+
+    // 모든 수업 조회
+    public List<Lesson> getAllLessons(Long teacherId) {
+        return lessonRepository.findByUser_Id(teacherId);
+    }
+
+    // 모든 예약 조회
+    public List<Booking> getAllBookings(Long teacherId) {
+        return bookingRepository.findAllByTeacherId(teacherId);
     }
 }

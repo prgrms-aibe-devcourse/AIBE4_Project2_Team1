@@ -18,6 +18,8 @@ public class StudentProfileController {
     @GetMapping
     public String studentProfilePage(@RequestParam("id") Long id, Model model) {
         model.addAttribute("profile", profileService.getProfileByStudentId(id));
+        model.addAttribute("bookings", profileService.getBookingByStudentId(id));
+        model.addAttribute("payments", profileService.getPaymentByStudentId(id));
         return "pages/profiles/student-profile";
     }
 
@@ -28,17 +30,27 @@ public class StudentProfileController {
         return "pages/profiles/student-profile-update";
     }
 
-    // 프로필 이미지 수정
-    @PostMapping("/update/image")
-    public String updateStudentProfileImage(@RequestBody StudentDTO dto) {
+    // 프로필 수정
+    @PostMapping("/update")
+    public String updateStudentProfile(@RequestBody StudentDTO dto) {
+        if (dto.getImage().isEmpty()) throw new IllegalArgumentException("잘못된 사진입니다.");
         profileService.setStudentImage(dto);
-        return "redirect:/profile/student/update";
+        profileService.setStudentIntroduce(dto);
+        return "redirect:/profile/student?id=%d".formatted(dto.getId());
     }
 
-    // 프로필 한줄 소개 수정
-    @PostMapping("/update/introduce")
-    public String updateStudentProfileIntroduce(@RequestBody StudentDTO dto) {
-        profileService.setStudentIntroduce(dto);
-        return "redirect:/profile/student/update";
-    }
+//    // 프로필 이미지 수정
+//    @PostMapping("/update/image")
+//    public String updateStudentProfileImage(@RequestBody StudentDTO dto) {
+//        if (dto.getImage().isEmpty()) throw new IllegalArgumentException("잘못된 사진입니다.");
+//        profileService.setStudentImage(dto);
+//        return "redirect:/profile/student/update?id=%d".formatted(dto.getId());
+//    }
+//
+//    // 프로필 한줄 소개 수정
+//    @PostMapping("/update/introduce")
+//    public String updateStudentProfileIntroduce(@RequestBody StudentDTO dto) {
+//        profileService.setStudentIntroduce(dto);
+//        return "redirect:/profile/student/update?id=%d".formatted(dto.getId());
+//    }
 }

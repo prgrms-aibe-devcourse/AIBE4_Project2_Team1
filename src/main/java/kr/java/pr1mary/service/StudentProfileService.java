@@ -1,10 +1,11 @@
 package kr.java.pr1mary.service;
 
 import kr.java.pr1mary.dto.view.StudentDTO;
+import kr.java.pr1mary.entity.Payment;
+import kr.java.pr1mary.entity.lesson.Booking;
 import kr.java.pr1mary.entity.lesson.Subject;
 import kr.java.pr1mary.entity.user.StudentProfile;
-import kr.java.pr1mary.repository.StudentProfileRepository;
-import kr.java.pr1mary.repository.SubjectRepository;
+import kr.java.pr1mary.repository.*;
 import kr.java.pr1mary.repository.StudentProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -22,6 +24,8 @@ import java.util.UUID;
 @Transactional
 public class StudentProfileService {
     private final StudentProfileRepository studentProfileRepository;
+    private final BookingRepository bookingRepository;
+    private final PaymentRepository paymentRepository;
 
     @Value("${file.path-student}")
     private String studentPath;
@@ -55,5 +59,15 @@ public class StudentProfileService {
     // 학생 id로 학생 정보 불러오기
     public StudentProfile getProfileByStudentId(Long id) {
         return studentProfileRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 사용자를 찾을 수 없음"));
+    }
+
+    // 학생 id로 예약 정보 불러오기
+    public List<Booking> getBookingByStudentId(Long id) {
+        return bookingRepository.findAllByStudentIdOrderByScheduleStartTimeDesc(id);
+    }
+
+    // 학생이 결제한 내역을 최신순으로 조회
+    public List<Payment> getPaymentByStudentId(Long id) {
+        return paymentRepository.findAllByBooking_Student_IdOrderByCreatedAtDesc(id);
     }
 }
