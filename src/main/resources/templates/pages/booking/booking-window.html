@@ -399,7 +399,7 @@
 
             const bookingData = await response.json();
             // 서버에서 orderId를 받아온다고 가정
-            const orderId = bookingData.orderId || `ORDER_${new Date().getTime()}`;
+            const orderId = bookingData.orderId;
 
             // Toss 결제창 호출
             const clientKey = "test_ck_yZqmkKeP8gWj1B0QjXRB8bQRxB9l"; // 본인 키 사용

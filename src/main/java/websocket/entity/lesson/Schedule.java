@@ -39,7 +39,7 @@ public class Schedule {
         this.user = user;
         this.lesson = lesson;
         this.startTime = request.startTime();
-        this.endTime = request.endTime();
+        this.endTime = request.startTime().plusMinutes(request.duration());
         this.isBooked = false;
     }
 }

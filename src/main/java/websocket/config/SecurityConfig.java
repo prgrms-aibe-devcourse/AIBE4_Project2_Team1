@@ -1,6 +1,6 @@
 package websocket.config;
 
-import jakarta.servlet.DispatcherType;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import websocket.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -32,10 +32,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
-                        .requestMatchers("/", "/login/**", "/css/**", "/js/**", "/api/login", "/api/signup", "/api/logintest").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
 
                 .formLogin(form -> form
@@ -66,7 +65,6 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint())
-                        .accessDeniedHandler(accessDeniedHandler())
                 );
 
         return http.build();

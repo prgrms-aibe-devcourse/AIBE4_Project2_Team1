@@ -1,6 +1,5 @@
 package websocket.controller.view;
 
-import websocket.dto.api.request.PaymentConfirmRequest;
 import websocket.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,8 +20,8 @@ public class PaymentViewController {
                                  @RequestParam("amount") Long amount,
                                  @RequestParam("paymentKey") String paymentKey) {
         // 결제 승인 요청
-        PaymentConfirmRequest paymentConfirmRequest = new PaymentConfirmRequest(bookingId, amount, paymentKey, orderNumber);
-        paymentService.processPayment(paymentConfirmRequest);
+//        PaymentConfirmRequest paymentConfirmRequest = new PaymentConfirmRequest(bookingId, amount, paymentKey, orderNumber);
+//        paymentService.processPayment(paymentConfirmRequest);
 
         return "pages/booking/payment-success";
     }

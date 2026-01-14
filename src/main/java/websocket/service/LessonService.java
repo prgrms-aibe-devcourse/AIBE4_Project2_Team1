@@ -41,10 +41,6 @@ public class LessonService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
-        if(!teacherProfileRepository.existsTeacherProfileByUser_Id(userId)){
-            throw new IllegalArgumentException("선생님이 아닙니다.");
-        }
-
         Lesson lesson = Lesson.create(request, user);
         Lesson saved = lessonRepository.save(lesson);
 
