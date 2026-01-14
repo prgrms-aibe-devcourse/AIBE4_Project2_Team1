@@ -1,6 +1,7 @@
 package websocket.config;
 
 import jakarta.servlet.DispatcherType;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import websocket.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -113,12 +114,13 @@ public class SecurityConfig {
     }
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .requestMatchers("/images/**", "/css/**", "/js/**", "/favicon.ico");
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-    
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/images/**", "/css/**", "/js/**", "/favicon.ico");
     }
 }

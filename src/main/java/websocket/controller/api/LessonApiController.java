@@ -46,17 +46,7 @@ public class LessonApiController {
     // 과외 상세 조회
     @GetMapping("/{id}")
     public ResponseEntity<LessonDetailResponse> getLessonDetailApi(@PathVariable Long id){
-        // 테스트용 가짜 데이터
-        LessonDetailResponse response = new LessonDetailResponse(
-                1L,
-                "고등 수학 완전 정복 (수1, 수2)",   // title
-                "이 수업은 수학 기초가 부족한 학생들을 위해...", // description
-                Subjects.MATH,                     // subjects (Enum 가정)
-                "ONLINE",                          // mode
-                65000L,                            // price (Long 타입)
-                4.8,                                // averageRating
-                90
-        );
+        LessonDetailResponse response = lessonService.getLessonDetail(id);
         return ResponseEntity.ok(response);
     }
 }
