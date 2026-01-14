@@ -89,15 +89,7 @@
 </head>
 <body>
 
-<header>
-    <div class="header-logo">
-        <span class="menu-icon">☰</span> 로고
-    </div>
-    <div class="header-icons">
-        <span>🔔</span>
-        <span>💬</span>
-    </div>
-</header>
+<header th:replace="~{fragments/header :: header}"></header>
 
 <div class="container">
     <div class="content-wrapper">
@@ -145,8 +137,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="bio">자기소개</label>
-                        <textarea id="bio" name="bio" rows="4" th:value="${profile.bio}" placeholder="나를 소개하는 한 마디를 적어주세요"></textarea>
+                        <label for="introduce">자기소개</label>
+                        <textarea id="introduce" name="introduce" rows="4" th:value="${profile.bio}" placeholder="나를 소개하는 한 마디를 적어주세요"></textarea>
                     </div>
 
                     <button type="submit" class="btn-submit">확인</button>
@@ -154,14 +146,9 @@
             </div>
         </main>
     </div>
-
-    <footer class="footer-info">
-        <div class="footer-links">
-            <span>이용약관</span> | <span>개인정보처리방침</span> | <span>고객센터</span>
-        </div>
-        <p class="copyright">© 2026 My Study Platform. All rights reserved.</p>
-    </footer>
 </div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </body>
 </html>

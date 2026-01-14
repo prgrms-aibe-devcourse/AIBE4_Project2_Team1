@@ -71,15 +71,7 @@
 </head>
 <body>
 
-<header>
-    <div class="header-logo">
-        <span class="menu-icon">☰</span> 로고
-    </div>
-    <div class="header-icons">
-        <span>🔔</span>
-        <span>💬</span>
-    </div>
-</header>
+<header th:replace="~{fragments/header :: header}"></header>
 
 <div class="container">
     <div class="content-wrapper">
@@ -105,9 +97,9 @@
 
             <section class="section-card">
                 <h3>📅 다가오는 수업</h3>
-                <div style="margin-top: 10px; color: var(--text-secondary);">
-                    <p><strong th:text="${}">수업 제목</strong> 수업 제목 - XXX 선생님</p>
-                    <p><strong>D-5</strong> 수업 제목 - XXX 선생님</p>
+                <div style="margin-top: 10px; color: var(--text-secondary);" th:each="b: ${before}">
+                    <p th:text="${b.lesson.title}">수업 제목</p>
+                    <p th:text="${b.lesson.user.name}">XXX 선생님</p>
                 </div>
             </section>
 
@@ -115,9 +107,9 @@
                 <div class="tab-menu">
                     <span class="active">수강 내역</span>
                 </div>
-                <div class="list-row" th:each="book: ${bookings}">
-                    <span th:text="${book.lesson.title}">20XX.XX.XX - 수업 제목</span>
-                    <span class="status-badge">수강완료</span>
+                <div class="list-row" th:each="a: ${after}">
+                    <span th:text="${a.lesson.title}">수업 제목</span>
+<!--                    <span class="status-badge">수강완료</span>-->
                     <button class="btn-side" th:onclick="|location.href='@{/review(userId=${profile.user.id},lessonId=${book.lesson.id})}'|" style="padding: 2px 10px;">리뷰 수정</button>
                 </div>
 <!--                <div class="list-row">-->
@@ -154,12 +146,7 @@
         </main>
     </div>
 
-    <footer class="footer-info">
-        <div class="footer-links">
-            <span>이용약관</span> | <span>개인정보처리방침</span> | <span>고객센터</span>
-        </div>
-        <p class="copyright">© 2026 My Study Platform. All rights reserved.</p>
-    </footer>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 </div>
 
 </body>

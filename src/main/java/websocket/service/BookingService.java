@@ -241,4 +241,14 @@ public class BookingService {
         // 스케줄 복구
         booking.getSchedule().setIsBooked(false);
     }
+
+    // 이미 수강한 수업 예약 조회하기
+    public List<Booking> getAllBeforeNow(Long id) {
+        return bookingRepository.findAllBefore(id);
+    }
+
+    // 아직 수강하지 않은 수업 예약 조회
+    public List<Booking> getAllAfterNow(Long id) {
+        return bookingRepository.findAllAfter(id);
+    }
 }

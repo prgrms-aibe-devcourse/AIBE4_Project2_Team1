@@ -30,8 +30,8 @@ public class StudentProfileService {
     @Value("${file.path-student}")
     private String studentPath;
 
-    // 프로필 사진 등록 -> 이미지 경로 출력
-    public String setStudentImage(StudentDTO dto) {
+    // 학생 프로필 수정
+    public void updateStudentProfile(StudentDTO dto) {
         StudentProfile profile = getProfileByStudentId(dto.getId());
 
         UUID uuid = UUID.randomUUID();
@@ -47,18 +47,39 @@ public class StudentProfileService {
         }
 
         profile.setImageUrl(imageFileName);
-        return imageFileName;
-    }
-
-    // 학생 한줄 소개 등록
-    public void setStudentIntroduce(StudentDTO dto) {
-        StudentProfile profile = getProfileByStudentId(dto.getId());
         profile.setBio(dto.getIntroduce());
     }
 
-    // 학생 id로 학생 정보 불러오기
+//    // 프로필 사진 등록 -> 이미지 경로 출력
+//    public String setStudentImage(StudentDTO dto) {
+//        StudentProfile profile = getProfileByStudentId(dto.getId());
+//
+//        UUID uuid = UUID.randomUUID();
+//        String imageFileName = uuid + "_" + dto.getId();
+//        System.out.println("이미지 이름: " + imageFileName);
+//
+//        Path imageFilePath = Paths.get(studentPath, imageFileName);
+//
+//        try {
+//            Files.write(imageFilePath, dto.getImage().getBytes());
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        profile.setImageUrl(imageFileName);
+//        return imageFileName;
+//    }
+//
+//    // 학생 한줄 소개 등록
+//    public void setStudentIntroduce(StudentDTO dto) {
+//        StudentProfile profile = getProfileByStudentId(dto.getId());
+//        profile.setBio(dto.getIntroduce());
+//    }
+
+    // 학생 id로 학생 정보 불러오기 => 없다면 빈(empty) 프로필 생성
     public StudentProfile getProfileByStudentId(Long id) {
-        return studentProfileRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 사용자를 찾을 수 없음"));
+        return studentProfileRepository.findById(id)
+                .orElseGet(() -> studentProfileRepository.save(new StudentProfile()));
     }
 
     // 학생 id로 예약 정보 불러오기
@@ -69,10 +90,5 @@ public class StudentProfileService {
     // 학생이 결제한 내역을 최신순으로 조회
     public List<Payment> getPaymentByStudentId(Long id) {
         return paymentRepository.findAllByBooking_Student_IdOrderByCreatedAtDesc(id);
-    }
-
-    // 학생 프로필 생성 => 학생 계정 생성 시 같이 저장해야 함
-    public void insertStudentProfile() {
-        studentProfileRepository.save(new StudentProfile());
     }
 }

@@ -1,6 +1,8 @@
 package websocket.controller.view;
 
 import websocket.dto.view.StudentDTO;
+import websocket.service.BookingService;
+import websocket.service.ReviewService;
 import websocket.service.StudentProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -12,12 +14,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class StudentProfileController {
     private final StudentProfileService profileService;
+    private final BookingService bookingService;
 
     // 프로필 페이지
     @GetMapping
     public String studentProfilePage(@RequestParam("id") Long id, Model model) {
         model.addAttribute("profile", profileService.getProfileByStudentId(id));
-        model.addAttribute("bookings", profileService.getBookingByStudentId(id));
+        model.addAttribute("before", bookingService.getAllBeforeNow(id));
+        model.addAttribute("after", bookingService.getAllAfterNow(id));
         model.addAttribute("payments", profileService.getPaymentByStudentId(id));
         return "pages/profiles/student-profile";
     }
@@ -33,8 +37,7 @@ public class StudentProfileController {
     @PostMapping("/update")
     public String updateStudentProfile(@RequestBody StudentDTO dto) {
         if (dto.getImage().isEmpty()) throw new IllegalArgumentException("잘못된 사진입니다.");
-        profileService.setStudentImage(dto);
-        profileService.setStudentIntroduce(dto);
+        profileService.updateStudentProfile(dto);
         return "redirect:/profile/student?id=%d".formatted(dto.getId());
     }
 

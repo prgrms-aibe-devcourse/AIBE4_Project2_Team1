@@ -57,8 +57,7 @@ public class TeacherProfileController {
     // 프로필 수정
     @PostMapping("/update")
     public String updateTeacherProfileImage(@RequestBody TeacherDTO dto) {
-        profileService.setTeacherIntroduce(dto);
-        profileService.setTeacherImage(dto);
+        profileService.updateTeacherProfile(dto);
         profileService.saveSubject(dto);
         return "redirect:/profile/teacher?id=%d".formatted(dto.getId());
     }

@@ -94,13 +94,7 @@
 </head>
 <body>
 
-<header>
-    <div class="logo">로고</div>
-    <div class="header-icons">
-        <i class="far fa-bell"></i>
-        <i class="far fa-comment-dots"></i>
-    </div>
-</header>
+<header th:replace="~{fragments/header :: header}"></header>
 
 <div class="container">
     <aside class="sidebar">
@@ -191,5 +185,6 @@
 
     </main>
 </div>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

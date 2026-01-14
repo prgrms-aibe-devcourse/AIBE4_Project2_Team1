@@ -53,18 +53,9 @@
     </style>
 </head>
 <body>
+<header th:replace="~{fragments/header :: header}"></header>
 
 <div class="app-container">
-    <header>
-        <div class="header-left">
-            <div class="menu-icon">≡</div>
-            <div class="logo">로고</div>
-        </div>
-        <div class="header-right">
-            <span>🔔</span>
-            <span>💬</span>
-        </div>
-    </header>
 
     <main>
         <section class="profile-section">
@@ -133,6 +124,7 @@
         </section>
     </main>
 </div>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </body>
 </html>

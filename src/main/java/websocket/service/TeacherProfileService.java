@@ -30,12 +30,11 @@ public class TeacherProfileService {
     private final LessonRepository lessonRepository;
     private final BookingRepository bookingRepository;
 
-
     @Value("${file.path-teacher}")
     private String teacherPath;
 
-    // 프로필 사진 등록 -> 이미지 경로 출력
-    public String setTeacherImage(TeacherDTO dto) {
+    // 교사 프로필 수정
+    public void updateTeacherProfile(TeacherDTO dto) {
         TeacherProfile profile = getProfileByTeacherId(dto.getId());
 
         UUID uuid = UUID.randomUUID();
@@ -51,14 +50,34 @@ public class TeacherProfileService {
         }
 
         profile.setImageUrl(imageFileName);
-        return imageFileName;
-    }
-
-    // 교사 한줄 소개 등록
-    public void setTeacherIntroduce(TeacherDTO dto) {
-        TeacherProfile profile = getProfileByTeacherId(dto.getId());
         profile.setBio(dto.getIntroduce());
     }
+
+//    // 프로필 사진 등록 -> 이미지 경로 출력
+//    public String setTeacherImage(TeacherDTO dto) {
+//        TeacherProfile profile = getProfileByTeacherId(dto.getId());
+//
+//        UUID uuid = UUID.randomUUID();
+//        String imageFileName = uuid + "_" + dto.getId();
+//        System.out.println("이미지 이름: " + imageFileName);
+//
+//        Path imageFilePath = Paths.get(teacherPath, imageFileName);
+//
+//        try {
+//            Files.write(imageFilePath, dto.getImage().getBytes());
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        profile.setImageUrl(imageFileName);
+//        return imageFileName;
+//    }
+//
+//    // 교사 한줄 소개 등록
+//    public void setTeacherIntroduce(TeacherDTO dto) {
+//        TeacherProfile profile = getProfileByTeacherId(dto.getId());
+//        profile.setBio(dto.getIntroduce());
+//    }
 
     // 담당 과목 설정
     public void saveSubject(TeacherDTO dto) {
@@ -70,9 +89,10 @@ public class TeacherProfileService {
         subjectRepository.save(subject);
     }
 
-    // 교사 id로 교사 정보 불러오기
+    // 교사 id로 교사 정보 불러오기 => 없다면 빈(empty) 프로필 생성
     public TeacherProfile getProfileByTeacherId(Long id) {
-        return teacherProfileRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 사용자를 찾을 수 없음"));
+        return teacherProfileRepository.findById(id)
+                .orElseGet(() -> teacherProfileRepository.save(new TeacherProfile()));
     }
 
     // 리뷰 평점 가져오기
@@ -99,10 +119,5 @@ public class TeacherProfileService {
     // 모든 예약 조회
     public List<Booking> getAllBookings(Long teacherId) {
         return bookingRepository.findAllByTeacherId(teacherId);
-    }
-
-    // 교사 프로필 생성 => 교사 계정 생성 시 같이 저장해야 함
-    public void insertTeacherProfile() {
-        teacherProfileRepository.save(new TeacherProfile());
     }
 }
