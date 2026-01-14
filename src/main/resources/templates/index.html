@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>StudyLink - 당신의 성장을 함께 합니다</title>
+    <link rel="stylesheet" th:href="@{/css/global.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <style>
         body { background-color: #fff; color: #333; font-family: 'Pretendard', sans-serif; }
@@ -69,6 +70,8 @@
 </head>
 <body>
 
+<header th:replace="~{fragments/header :: header}"></header>
+
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
         <!-- <a class="navbar-brand" href="#">Navbar</a> -->
@@ -85,7 +88,7 @@
                     <a class="nav-link" href="#"><img th:src="@{/images/bell.png}" width="30" height="30"></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><img th:src="@{/images/talk.png}" width="30" height="30"></a>
+                    <a class="nav-link" href="/chat-room"><img th:src="@{/images/talk.png}" width="30" height="30"></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#"><img th:src="@{/images/profile.png}" width="30" height="30"></a>
@@ -97,11 +100,25 @@
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Backdrop with scrolling</h5>
+        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel"><img th:src="@{/images/favicon.png}"></h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <p>Try scrolling the rest of the page to see this option in action.</p>
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <p class="card-text">프로필</p>
+            </div>
+        </div>
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <p class="card-text">수업 예약 현황</p>
+            </div>
+        </div>
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <p class="card-text">선생님 찾기</p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -187,12 +204,7 @@
     <img th:src="@{/images/cta-banner.png}" class="img-fluid">
 </div>
 
-<footer class="footer">
-    <div class="footer-links mb-2">
-        <a href="#">사업자 정보</a> | <a href="#">이용 약관</a> | <a href="#">개인정보처리방침</a>
-    </div>
-    <p class="mb-0">© 2026 과외 매칭 시스템</p>
-</footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>

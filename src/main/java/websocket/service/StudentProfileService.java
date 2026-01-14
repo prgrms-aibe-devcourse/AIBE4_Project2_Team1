@@ -70,4 +70,9 @@ public class StudentProfileService {
     public List<Payment> getPaymentByStudentId(Long id) {
         return paymentRepository.findAllByBooking_Student_IdOrderByCreatedAtDesc(id);
     }
+
+    // 학생 프로필 생성 => 학생 계정 생성 시 같이 저장해야 함
+    public void insertStudentProfile() {
+        studentProfileRepository.save(new StudentProfile());
+    }
 }
