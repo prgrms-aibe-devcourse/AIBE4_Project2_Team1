@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="header">
+    <div class="header-logo">
+        <span id="menuBtn" class="material-icons-outlined menu-icon">menu</span>
+        <!-- 로고로 바꾸기 -->
+        <a href="/" style="text-decoration: none; color: inherit;">
+            StudyLink
+        </a>
+    </div>
+
+    <div class="header-icons">
+        <span class="material-icons-outlined" style="cursor: pointer;" onclick="location.href='/chat'">chat_bubble</span>
+        <span class="material-icons-outlined">person</span>
+    </div>
+</header>
+</html>

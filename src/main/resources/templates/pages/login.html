@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인 - Pr1mary</title>
+    <title>로그인</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+    <link rel="stylesheet" th:href="@{/css/global.css}">
     <style>
         /* [기본 설정] */
         :root {
-            --primary: #2196F3;
-            --bg-body: #F5F5F5;
-            --text-main: #212121;
-            --text-sub: #757575;
             --border: #E0E0E0;
             --kakao: #FEE500;
         }
@@ -21,8 +20,8 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -45,11 +44,11 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 8px;
-            color: var(--text-main);
+            color: var(--text-primary);
         }
         .welcome-text {
             font-size: 16px;
-            color: var(--text-main);
+            color: var(--text-primary);
             margin-bottom: 24px;
         }
 
@@ -72,7 +71,7 @@
             border-radius: 20px;
             font-size: 14px;
             font-weight: 500;
-            color: var(--text-sub);
+            color: var(--text-secondary);
             transition: all 0.3s ease;
             z-index: 2;
         }
@@ -80,7 +79,7 @@
         /* 활성화된 버튼 스타일 */
         .role-btn.active {
             background-color: white;
-            color: var(--text-main);
+            color: var(--text-primary);
             font-weight: 700;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
@@ -108,7 +107,7 @@
             justify-content: space-between;
             align-items: center;
             font-size: 12px;
-            color: var(--text-sub);
+            color: var(--text-secondary);
             margin-bottom: 20px;
         }
         .check-wrap { display: flex; align-items: center; gap: 4px; cursor: pointer; }
@@ -118,7 +117,7 @@
             width: 100%;
             padding: 14px;
             background-color: #E0E0E0; /* 기본 회색 */
-            color: var(--text-sub);
+            color: var(--text-secondary);
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -136,7 +135,7 @@
         /* [SNS 로그인] */
         .sns-divider {
             font-size: 12px;
-            color: var(--text-sub);
+            color: var(--text-secondary);
             margin-bottom: 16px;
             position: relative;
         }
@@ -166,16 +165,16 @@
             gap: 8px;
         }
         .btn-kakao { background-color: var(--kakao); color: #3C1E1E; }
-        .btn-google { background-color: white; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-google { background-color: white; border: 1px solid var(--border); color: var(--text-primary); }
 
         /* [회원가입 링크] */
         .footer-link {
             margin-top: 20px;
             font-size: 12px;
-            color: var(--text-sub);
+            color: var(--text-secondary);
         }
         .link-signup {
-            color: var(--text-main);
+            color: var(--text-primary);
             font-weight: 700;
             text-decoration: none;
             margin-left: 4px;
@@ -238,6 +237,7 @@
         아직 계정이 없으신가요?
         <a href="/signup" class="link-signup">회원가입</a>
     </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 </div>
 
 <script>

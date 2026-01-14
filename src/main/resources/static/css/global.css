@@ -1,0 +1,97 @@
+/* resources/static/css/global.css */
+
+/* --- 공통 변수 및 설정 --- */
+:root {
+    --primary: #2196F3;
+    --primary-dark: #1976D2;
+    --light-primary: #BBDEFB;
+    --accent: #CDDC39;
+    --text-primary: #212121;
+    --text-secondary: #757575;
+    --white: #FFFFFF;
+    --bg-color: #f0f2f5;
+    --divider: #e0e0e0;
+
+    --header-height: 60px;
+    --border-radius: 12px;
+    --max-width: 1200px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding-top: var(--header-height); /* 헤더 높이만큼 여백 */
+}
+
+/* --- 공통 헤더 스타일 --- */
+header {
+    background-color: var(--white);
+    height: var(--header-height);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--divider);
+    position: fixed; top: 0; left: 0; width: 100%;
+    z-index: 1000;
+}
+.header-logo {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-icon {
+    color: var(--primary);
+    cursor: pointer;
+}
+
+.header-icons {
+    display: flex;
+    gap: 15px;
+    color: var(--primary);
+    cursor: pointer;
+}
+
+/* --- 공통 푸터 스타일 --- */
+.footer-info {
+    padding: 40px 0;
+    text-align: center;
+    border-top: 1px solid var(--divider);
+    margin-top: 40px;
+    color: var(--text-secondary);
+}
+
+.footer-links span {
+    margin: 0 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.footer-links span:hover {
+    text-decoration: underline;
+}
+
+.copyright {
+    font-size: 0.8rem;
+    margin-top: 12px;
+    color: #999;
+}
+
+/* --- 공통 컨테이너 --- */
+.container {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 20px 16px;
+}

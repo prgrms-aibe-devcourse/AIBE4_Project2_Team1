@@ -3,20 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>새 수업 등록 - D-trip Edu</title>
+    <title>새 수업 등록</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <style>
-        /* =========================================
-           Page Specific Styles
-           ========================================= */
-
         /* 1. Form Container (1200px 내부에서 중앙 정렬될 폼 영역) */
         .form-wrapper {
             max-width: 720px; /* 입력 폼은 너무 넓으면 안 예뻐서 제한 */
@@ -126,24 +123,10 @@
 </head>
 <body>
 
-<header>
-    <div class="header-logo">
-        <span class="material-icons-outlined menu-icon">menu</span>
-        <a href="/" style="text-decoration: none; color: inherit;">
-            D-trip Edu
-        </a>
-    </div>
-
-    <div class="header-icons">
-        <span class="material-icons-outlined" style="cursor: pointer;" onclick="location.href='/chat'">chat_bubble</span>
-        <span class="material-icons-outlined">person</span>
-    </div>
-</header>
+<header th:replace="~{fragments/header :: header}"></header>
 
 <main class="container">
-
     <div class="form-wrapper">
-
         <div class="page-header-row">
             <span class="material-icons-outlined back-icon" onclick="history.back()">arrow_back</span>
             <h1 class="page-title">새 수업 등록하기</h1>
@@ -162,8 +145,8 @@
                     </div>
                     <select id="subjects" class="custom-select" required>
                         <option value="" disabled selected>카테고리를 선택해주세요 (ex. 수학, 영어)</option>
-                        <option value="MATH">수학</option>
                         <option value="KOREAN">국어</option>
+                        <option value="MATH">수학</option>
                         <option value="ENGLISH">영어</option>
                         <option value="HISTORY">역사</option>
                         <option value="SCIENCE">과학</option>
@@ -233,6 +216,7 @@
                 <button type="submit" class="btn-submit">수업 등록 완료</button>
             </div>
         </form>
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
     </div>
 </main>
 
