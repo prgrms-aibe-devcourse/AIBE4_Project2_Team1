@@ -132,155 +132,169 @@
             <h1 class="page-title">새 수업 등록하기</h1>
         </div>
 
-        <form id="lessonForm" onsubmit="submitLesson(event)">
-            <input type="hidden" id="teacherId" th:value="${teacherId}">
+        <input type="hidden" id="teacherId" th:value="${teacherId}">
 
-            <section class="input-section">
-                <div class="section-header">[기본 정보]</div>
+        <section class="input-section">
+            <div class="section-header">[기본 정보]</div>
 
-                <div class="form-group">
-                    <div class="label-row">
-                        <span class="main-label">과목 선택</span>
-                        <span class="sub-label">Category</span>
-                    </div>
-                    <select id="subjects" class="custom-select" required>
-                        <option value="" disabled selected>카테고리를 선택해주세요 (ex. 수학, 영어)</option>
-                        <option value="KOREAN">국어</option>
-                        <option value="MATH">수학</option>
-                        <option value="ENGLISH">영어</option>
-                        <option value="HISTORY">역사</option>
-                        <option value="SCIENCE">과학</option>
-                    </select>
+            <div class="form-group">
+                <div class="label-row">
+                    <span class="main-label">과목 선택</span>
+                    <span class="sub-label">Category</span>
                 </div>
-
-                <div class="form-group">
-                    <div class="label-row">
-                        <span class="main-label">수업 제목</span>
-                        <span class="sub-label">Title</span>
-                    </div>
-                    <input type="text" id="title" class="custom-input" placeholder="수업 제목을 입력해주세요 (0/50자)" maxlength="50" required>
-                </div>
-            </section>
-
-            <section class="input-section">
-                <div class="section-header">[판매 정보]</div>
-
-                <div class="form-group">
-                    <div class="label-row">
-                        <span class="main-label">수업 방식</span>
-                        <span class="sub-label">Mode</span>
-                    </div>
-                    <div class="radio-container">
-                        <div class="radio-item">
-                            <input type="radio" name="mode" id="mode_online" value="ONLINE" checked>
-                            <label for="mode_online" class="radio-box">온라인 (Zoom 등)</label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" name="mode" id="mode_offline" value="OFFLINE">
-                            <label for="mode_offline" class="radio-box">오프라인 (대면)</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="label-row">
-                        <span class="main-label">시간당 가격</span>
-                        <span class="sub-label">Price</span>
-                    </div>
-                    <div class="price-wrapper">
-                        <input type="number" id="price" class="custom-input" placeholder="가격 입력" min="1000" step="500" required style="padding-right: 80px;">
-                        <span class="unit-text">원 / 시간</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="input-section">
-                <div class="section-header">[수업 시간]</div>
-
-                <div class="form-group">
-                    <div class="form-group">
-                        <div class="label-row">
-                            <span class="main-label">수업 시간</span>
-                        </div>
-                        <input type="number" id="timePerSession" placeholder="수업 시간 (최소 60분)" class="custom-input">
-                    </div>
-
-                    <div class="form-group">
-                        <div class="label-row">
-                            <span class="main-label">시작 시간</span>
-                        </div>
-                        <input type="datetime-local" id="startTime" class="custom-input">
-                    </div>
-                </div>
-            </section>
-
-            <section class="input-section">
-                <div class="section-header">[수업 소개]</div>
-
-                <div class="form-group">
-                    <div class="label-row">
-                        <span class="main-label">상세 설명</span>
-                        <span class="sub-label">Description</span>
-                    </div>
-                    <div style="border:1px solid var(--divider); border-bottom:none; background:#f9f9f9; padding:8px; border-radius:8px 8px 0 0; display:flex; gap:10px; color:var(--text-secondary);">
-                        <span class="material-icons-outlined" style="font-size:18px;">format_bold</span>
-                        <span class="material-icons-outlined" style="font-size:18px;">format_italic</span>
-                        <span class="material-icons-outlined" style="font-size:18px;">format_underlined</span>
-                        <span class="material-icons-outlined" style="font-size:18px;">list</span>
-                    </div>
-                    <textarea id="description" class="custom-textarea" style="border-radius:0 0 8px 8px; border-top:1px solid var(--divider);" placeholder="선생님의 수업 방식을 자세히 적어주세요.&#13;&#10;커리큘럼이나 수업 목표를 적으면 학생들의 신청률이 올라갑니다!" required></textarea>
-                </div>
-            </section>
-
-            <div class="submit-area">
-                <button type="submit" class="btn-submit">수업 등록 완료</button>
+                <select id="subjects" class="custom-select" required>
+                    <option value="" disabled selected>카테고리를 선택해주세요 (ex. 수학, 영어)</option>
+                    <option value="KOREAN">국어</option>
+                    <option value="MATH">수학</option>
+                    <option value="ENGLISH">영어</option>
+                    <option value="HISTORY">역사</option>
+                    <option value="SCIENCE">과학</option>
+                </select>
             </div>
-        </form>
+
+            <div class="form-group">
+                <div class="label-row">
+                    <span class="main-label">수업 제목</span>
+                    <span class="sub-label">Title</span>
+                </div>
+                <input type="text" id="title" class="custom-input" placeholder="수업 제목을 입력해주세요 (0/50자)" maxlength="50" required>
+            </div>
+        </section>
+
+        <section class="input-section">
+            <div class="section-header">[판매 정보]</div>
+
+            <div class="form-group">
+                <div class="label-row">
+                    <span class="main-label">수업 방식</span>
+                    <span class="sub-label">Mode</span>
+                </div>
+                <div class="radio-container">
+                    <div class="radio-item">
+                        <input type="radio" name="mode" id="mode_online" value="ONLINE" checked>
+                        <label for="mode_online" class="radio-box">온라인 (Zoom 등)</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" name="mode" id="mode_offline" value="OFFLINE">
+                        <label for="mode_offline" class="radio-box">오프라인 (대면)</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="label-row">
+                    <span class="main-label">시간당 가격</span>
+                    <span class="sub-label">Price</span>
+                </div>
+                <div class="price-wrapper">
+                    <input type="number" id="price" class="custom-input" placeholder="가격 입력" min="1000" step="500" required style="padding-right: 80px;">
+                    <span class="unit-text">원 / 시간</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="input-section">
+            <div class="section-header">[수업 시간]</div>
+
+            <div class="form-group">
+                <div class="form-group">
+                    <div class="label-row">
+                        <span class="main-label">수업 시간</span>
+                    </div>
+                    <input type="number" id="timePerSession" placeholder="수업 시간 (최소 60분)" class="custom-input">
+                </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <span class="main-label">시작 시간</span>
+                    </div>
+                    <input type="datetime-local" onchange="console.log(this.value)" id="startTime" class="custom-input">
+                </div>
+            </div>
+        </section>
+
+        <section class="input-section">
+            <div class="section-header">[수업 소개]</div>
+
+            <div class="form-group">
+                <div class="label-row">
+                    <span class="main-label">상세 설명</span>
+                    <span class="sub-label">Description</span>
+                </div>
+                <div style="border:1px solid var(--divider); border-bottom:none; background:#f9f9f9; padding:8px; border-radius:8px 8px 0 0; display:flex; gap:10px; color:var(--text-secondary);">
+                    <span class="material-icons-outlined" style="font-size:18px;">format_bold</span>
+                    <span class="material-icons-outlined" style="font-size:18px;">format_italic</span>
+                    <span class="material-icons-outlined" style="font-size:18px;">format_underlined</span>
+                    <span class="material-icons-outlined" style="font-size:18px;">list</span>
+                </div>
+                <textarea id="description" class="custom-textarea" style="border-radius:0 0 8px 8px; border-top:1px solid var(--divider);" placeholder="선생님의 수업 방식을 자세히 적어주세요.&#13;&#10;커리큘럼이나 수업 목표를 적으면 학생들의 신청률이 올라갑니다!" required></textarea>
+            </div>
+        </section>
+
+        <div class="submit-area">
+            <button class="btn-submit" onclick="createLesson()">수업 등록 완료</button>
+        </div>
+
         <footer th:replace="~{fragments/footer :: footer}"></footer>
     </div>
 </main>
 
 <script>
-    async function submitLesson(event) {
-        event.preventDefault();
+    async function apiCall(url, options = {}) {
+        try {
+            const res = await fetch(url, {
+                ...options,
+                credentials: 'same-origin', // fetch -> cookie를 읽어서 같이 전달해줌
+                headers: { 'Content-Type': 'application/json', ...options.headers }
+            });
+            const data = await res.json().catch(() => ({}));
+            return { ok: res.ok, data };
+        } catch (e) {
+            return { ok: false, data: {} };
+        }
+    }
 
+    async function createLesson() {
         const teacherId = document.getElementById('teacherId').value;
         const title = document.getElementById('title').value;
         const subjects = document.getElementById('subjects').value;
         const price = document.getElementById('price').value;
         const description = document.getElementById('description').value;
-        const startTime = document.getElementById('startTime').value;
         const timePerSession = document.getElementById('timePerSession').value;
-
         const mode = document.querySelector('input[name="mode"]:checked').value;
 
-        if (!subjects) {
-            alert("과목을 선택해주세요.");
-            document.getElementById('subjects').focus();
-            return;
+        const result = await apiCall('/api/lessons?teacherId=' + teacherId, {
+            method: 'POST',
+            body: JSON.stringify({
+                title: title,
+                description: description,
+                subjects: subjects,
+                mode: mode,
+                price: price,
+                timePerSession: timePerSession
+            })
+        });
+
+        if (result.ok) {
+            await createSchedule(result.data.id, teacherId, timePerSession);
         }
+    }
 
-        const requestData = {
-            title: title,
-            subjects: subjects,
-            mode: mode,
-            price: Number(price),
-            description: description,
-            timePerSession: timePerSession
-        };
+    async function createSchedule(lessonId, teacherId, timePerSession){
+        const startTime = document.getElementById('startTime').value;
 
-        try {
-            const response = await axios.post(`/api/lessons?teacherId=${teacherId}`, requestData);
+        const result = await apiCall('/api/schedules?teacherId=' + teacherId, {
+            method: 'POST',
+            body: JSON.stringify({
+                lessonId: lessonId,
+                startTime: startTime,
+                duration: timePerSession
+            })
+        });
 
-            if (response.status === 200) {
-                alert(startTime);
-                alert('수업이 성공적으로 등록되었습니다.');
-                window.location.href = '/lessons/my';
-            }
-        } catch (error) {
-            console.error('등록 실패:', error);
-            const msg = error.response?.data?.message || '알 수 없는 오류가 발생했습니다.';
-            alert('수업 등록에 실패했습니다.\n사유: ' + msg);
+        if (result.ok) {
+            alert("과외가 생성되었습니다!");
+            window.location.href = "/";
         }
     }
 </script>
