@@ -1,234 +1,199 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
-
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyLink - 당신의 성장을 함께합니다</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <link rel="stylesheet" th:href="@{/css/global.css}">
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>StudyLink - 당신의 성장을 함께 합니다</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <style>
-        /* --- 히어로 섹션 --- */
-        .hero-section {
-            width: 100%;
-            height: 280px;
-            background-color: var(--light-primary);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            margin-bottom: 24px;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .hero-section img { width: 100%; height: 100%; object-fit: cover; }
+        body { background-color: #fff; color: #333; font-family: 'Pretendard', sans-serif; }
 
-        /* --- 검색 영역 --- */
-        .search-section {
-            background-color: var(--white);
-            padding: 24px;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--divider);
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        /* 헤더 스타일 */
+        .navbar { border-bottom: 1px solid #eee; padding: 10px 15px; }
+        .nav-icons i { font-size: 1.4rem; margin-left: 15px; cursor: pointer; }
+
+        /* 메인 배너 스타일 */
+        .hero-banner {
+            background-color: #f8f1e7; /* 이미지의 베이지톤 배경색 */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
         }
 
-        .search-box { display: flex; gap: 12px; }
-        .search-input-wrapper { flex: 1; position: relative; display: flex; align-items: center; }
-        .search-icon { position: absolute; left: 16px; color: var(--divider); }
-        .search-input {
-            width: 100%; padding: 14px 14px 14px 48px;
-            border: 1px solid var(--divider); border-radius: 8px;
-            background-color: #f9f9f9; outline: none; font-size: 1rem;
-            transition: all 0.2s;
+        /* 가로 스크롤 컨테이너 */
+        .horizontal-scroll {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            gap: 1rem;
+            padding-bottom: 15px;
+            scrollbar-width: none;
         }
-        .search-input:focus { border-color: var(--primary); background-color: var(--white); }
-        .search-btn {
-            padding: 0 32px; background-color: var(--primary); color: white; border: none;
-            border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem;
-            transition: background 0.2s;
+        .horizontal-scroll::-webkit-scrollbar { display: none; }
+
+        /* 카드 공통 스타일 */
+        .card { flex: 0 0 auto; border-radius: 12px; border: 1px solid #dee2e6; }
+        .hot-class-card, .new-teacher-card { width: 220px; }
+        .review-card { width: 300px; }
+
+        .gray-box { width: 60px; height: 60px; background-color: #e9ecef; border-radius: 15px; }
+
+        /* 하단 CTA 배너 */
+        .cta-banner {
+            background-color: #0084ff;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 0;
+            margin-top: 40px;
         }
-        .search-btn:hover { background-color: var(--primary-dark); }
 
-        .tags { margin-top: 16px; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
-        .tag-label { font-weight: 700; margin-right: 8px; }
-        .tag {
-            color: var(--text-secondary); background-color: #f5f5f5;
-            padding: 6px 14px; border-radius: 20px; cursor: pointer;
-            transition: background 0.2s;
+        /* 푸터 스타일 */
+        .footer {
+            padding: 30px 0;
+            font-size: 0.85rem;
+            color: #777;
+            text-align: center;
+            border-top: 1px solid #eee;
         }
-        .tag:hover { background-color: #e0e0e0; }
+        .footer-links a { color: #555; text-decoration: none; margin: 0 10px; }
 
-        /* --- 섹션 공통 --- */
-        section { margin-bottom: 40px; }
-        .section-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 16px; padding-right: 4px;
-        }
-        .section-title { font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--text-primary); }
-        .view-all { font-size: 0.95rem; color: var(--text-secondary); text-decoration: none; font-weight: 500; }
-
-        /* --- 가로 스크롤 컨테이너 --- */
-        .horizontal-scroll-container {
-            display: flex; flex-wrap: nowrap; overflow-x: auto;
-            gap: 20px;
-            padding-bottom: 10px;
-            cursor: grab;
-            -ms-overflow-style: none; scrollbar-width: none;
-        }
-        .horizontal-scroll-container::-webkit-scrollbar { display: none; }
-        .horizontal-scroll-container.active { cursor: grabbing; transform: scale(1); }
-
-        /* --- 카드 공통 스타일 --- */
-        .card {
-            background: var(--white);
-            border: 1px solid var(--divider);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            flex-shrink: 0;
-            scroll-snap-align: start;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--primary); }
-
-        /* 인기 수업 카드 */
-        .class-card { width: 280px; }
-        .class-card-header { display: flex; gap: 16px; margin-bottom: 16px; }
-        .teacher-img-placeholder { width: 56px; height: 56px; background-color: #e0e0e0; border-radius: 8px; }
-        .teacher-info-text { display: flex; flex-direction: column; justify-content: center; }
-        .subject-badge { font-size: 0.8rem; color: var(--primary); font-weight: 700; margin-bottom: 4px; }
-        .teacher-name { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); }
-        .rating-badge { display: flex; align-items: center; font-size: 0.85rem; font-weight: 700; margin-top: 4px; }
-        .star-icon { color: #FFC107; font-size: 0.9rem; margin-right: 2px; }
-        .class-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
-        .class-time { font-size: 0.85rem; color: var(--text-secondary); }
-
-        /* 신규 선생님 카드 */
-        .teacher-card { width: 180px; text-align: center; }
-        .teacher-card-img { width: 100%; aspect-ratio: 1/1; background-color: #e0e0e0; border-radius: var(--border-radius); margin-bottom: 16px; }
-        .region-text { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px; }
-        .teacher-subject { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
-
-        /* 후기 카드 */
-        .review-card { width: 280px; display: flex; flex-direction: column; justify-content: space-between; background-color: var(--white); }
-        .review-header { font-size: 0.9rem; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
-        .review-content { font-size: 0.95rem; line-height: 1.6; color: #424242; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-
-        /* 배너 */
-        .cta-banner { width: 100%; border-radius: var(--border-radius); overflow: hidden; margin-top: 20px; }
-        .cta-banner img { width: 100%; height: auto; display: block; }
+        /* 검색창 커스텀 */
+        .search-container { margin-top: -25px; position: relative; z-index: 10; padding: 0 15px; }
+        .search-input { border-radius: 10px; border: 1px solid #dee2e6; padding: 12px 40px; }
     </style>
 </head>
-
 <body>
 
-<header th:replace="~{fragments/header :: header}"></header>
-<div class="container">
-    <div class="hero-section">
-        <img th:src="@{/images/hero-banner.png}" alt="메인 배너">
-    </div>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+        <button class="btn btn-outline-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+            <img th:src="@{/images/hamburger.png}" width="30" height="30">
+        </button>
 
-    <div class="search-section">
-        <form action="/search" method="get" class="search-box" onsubmit="return validateSearch()">
-            <div class="search-input-wrapper">
-                <span class="material-icons-outlined search-icon">search</span>
-                <input type="text" id="searchInput" name="keyword" class="search-input" placeholder="어떤 수업을 찾으세요?">
-            </div>
-            <button type="submit" class="search-btn">검색</button>
-        </form>
-        <div class="tags">
-            <span class="tag-label">추천 태그</span>
-            <span class="tag"># 국어</span>
-            <span class="tag"># 수학</span>
-            <span class="tag"># 영어</span>
-            <span class="tag"># 코딩</span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><img th:src="@{/images/bell.png}" width="30" height="30"></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><img th:src="@{/images/talk.png}" width="30" height="30"></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><img th:src="@{/images/profile.png}" width="30" height="30"></a>
+                </li>
+            </ul>
         </div>
     </div>
+</nav>
 
-    <section>
-        <div class="section-header">
-            <div class="section-title"><span>🔥</span> 지금 가장 핫한 인기 수업</div>
-        </div>
-        <div class="horizontal-scroll-container">
-            <div class="card class-card" th:each="num : ${#numbers.sequence(1, 6)}">
-                <div class="class-card-header">
-                    <div class="teacher-img-placeholder"></div>
-                    <div class="teacher-info-text">
-                        <span class="subject-badge">수학</span>
-                        <span class="teacher-name">김경현 선생님</span>
-                    </div>
-                </div>
-                <div class="class-title">고등 수학(상) 완벽 마스터</div>
-                <div class="rating-badge"><span class="material-icons star-icon">star</span> 4.8</div>
-                <div class="class-time" style="margin-top:8px;">18:00 ~ 20:00</div>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <div class="section-header">
-            <div class="section-title"><span>✨</span> 새로 오신 선생님</div>
-        </div>
-        <div class="horizontal-scroll-container">
-            <div class="card teacher-card" th:each="num : ${#numbers.sequence(1, 8)}">
-                <div class="teacher-card-img"></div>
-                <div class="region-text">서울 강남구</div>
-                <div class="teacher-subject">영어 회화</div>
-                <div class="teacher-name-sm">이선생님</div>
-            </div>
-        </div>
-    </section>
-
-    <div class="cta-banner">
-        <img th:src="@{/images/cta-banner.png}" alt="하단 배너">
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Backdrop with scrolling</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
-
+    <div class="offcanvas-body">
+        <p>Try scrolling the rest of the page to see this option in action.</p>
+    </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const sliders = document.querySelectorAll('.horizontal-scroll-container');
-        sliders.forEach(slider => {
-            let isDown = false;
-            let startX;
-            let scrollLeft;
-            slider.addEventListener('mousedown', (e) => {
-                isDown = true;
-                slider.classList.add('active');
-                startX = e.pageX - slider.offsetLeft;
-                scrollLeft = slider.scrollLeft;
-            });
-            slider.addEventListener('mouseleave', () => {
-                isDown = false;
-                slider.classList.remove('active');
-            });
-            slider.addEventListener('mouseup', () => {
-                isDown = false;
-                slider.classList.remove('active');
-            });
-            slider.addEventListener('mousemove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const x = e.pageX - slider.offsetLeft;
-                const walk = (x - startX) * 2;
-                slider.scrollLeft = scrollLeft - walk;
-            });
-        });
-    });
+<div class="hero-banner"><img th:src="@{/images/hero-banner.png}" class="img-fluid"></div>
 
-    function validateSearch() {
-        const input = document.getElementById('searchInput');
-        if(input.value.trim() === "") {
-            alert("검색어를 입력해주세요!");
-            input.focus();
-            return false;
-        }
-        return true;
-    }
-</script>
+<div class="container">
+    <div class="search-container mb-4">
+        <div class="position-relative mb-3">
+            <i class="bi bi-search position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="text" class="form-control search-input" placeholder="">
+            <button class="btn btn-outline-secondary position-absolute end-0 top-0 h-100 px-4 border-0" style="border-radius: 0 10px 10px 0;">검색</button>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="fw-bold me-3">추천 태그</span>
+            <span class="text-secondary me-3"># 국어</span>
+            <span class="text-secondary me-3"># 수학</span>
+            <span class="text-secondary"># 영어</span>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3 mt-5">
+        <h6 class="fw-bold m-0">🔥 지금 가장 핫한 인기 수업</h6>
+        <small class="text-muted" style="cursor:pointer">전체 보기 ></small>
+    </div>
+    <div class="horizontal-scroll mb-5">
+<!--        <div class="card hot-class-card p-3 shadow-sm">-->
+<!--            <div class="d-flex justify-content-between">-->
+<!--                <div><small class="text-muted">수업 과목</small><div class="fw-bold small">XXX 선생님</div><small class="text-warning">★ 4.8</small></div>-->
+<!--                <div class="gray-box"></div>-->
+<!--            </div>-->
+<!--            <div class="text-center mt-3"><div class="fw-bold">수업 제목</div><small class="text-muted">18:00 ~ 20:00</small></div>-->
+<!--        </div>-->
+<!--        <div class="card hot-class-card p-3 shadow-sm">-->
+<!--            <div class="d-flex justify-content-between"><div><small class="text-muted">수업 과목</small><div class="fw-bold small">XXX 선생님</div><small class="text-warning">★ 4.8</small></div><div class="gray-box"></div></div>-->
+<!--            <div class="text-center mt-3"><div class="fw-bold">수업 제목</div><small class="text-muted">18:00 ~ 20:00</small></div>-->
+<!--        </div>-->
+        <div class="card hot-class-card p-3 shadow-sm" th:each="l: ${lessons}">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <small th:text="${l.subjects}" class="text-muted">수업 과목</small>
+                    <div th:text="${l.teacherName}" class="fw-bold small">XXX 선생님</div>
+                    <small th:text="${l.averageRating}" class="text-warning">★ 4.8</small>
+                </div>
+                <div class="gray-box"></div>
+            </div>
+            <div class="text-center mt-3">
+                <div th:text="${l.title}" class="fw-bold">수업 제목</div>
+<!--                <small class="text-muted">18:00 ~ 20:00</small>-->
+            </div>
+        </div>
+    </div>
+
+    <h6 class="fw-bold mb-3">✨ 새로 오신 선생님을 소개합니다</h6>
+    <div class="horizontal-scroll mb-5">
+        <div class="card new-teacher-card p-3" th:each="t: ${teachers}">
+            <div class="d-flex align-items-center mb-3">
+                <div class="gray-box me-3"></div>
+                <span class="fw-bold" th:text="${t.regionCode}">지역</span>
+            </div>
+            <div class="text-center">
+<!--                <div class="fw-bold" th:text="${}">수업 과목</div>-->
+                <small class="text-muted" th:text="${t.user.name}">XXX 선생님</small>
+            </div>
+        </div>
+<!--        <div class="card new-teacher-card p-3"><div class="d-flex align-items-center mb-3"><div class="gray-box me-3"></div><span class="fw-bold">지역</span></div><div class="text-center"><div class="fw-bold">수업 과목</div><small class="text-muted">XXX 선생님</small></div></div>-->
+<!--        <div class="card new-teacher-card p-3"><div class="d-flex align-items-center mb-3"><div class="gray-box me-3"></div><span class="fw-bold">지역</span></div><div class="text-center"><div class="fw-bold">수업 과목</div><small class="text-muted">XXX 선생님</small></div></div>-->
+    </div>
+
+    <h6 class="fw-bold mb-3">🏆 후기</h6>
+    <div class="horizontal-scroll mb-4">
+        <div class="card review-card p-3" th:each="r: ${reviews}">
+            <div class="d-flex justify-content-between mb-3">
+                <span class="small fw-bold" th:text="${r.subject}">수업 과목</span>
+                <small class="text-muted" th:text="${r.teacherName}">XXX 선생님</small>
+            </div>
+            <div class="text-center py-2" th:text="${r.comment}">"후기 내용"</div>
+        </div>
+<!--        <div class="card review-card p-3"><div class="d-flex justify-content-between mb-3"><span class="small fw-bold">수업 과목</span><small class="text-muted">XXX 선생님</small></div><div class="text-center py-2">"후기 내용"</div></div>-->
+    </div>
+</div>
+
+<div class="cta-banner">
+    <img th:src="@{/images/cta-banner.png}" class="img-fluid">
+</div>
+
+<footer class="footer">
+    <div class="footer-links mb-2">
+        <a href="#">사업자 정보</a> | <a href="#">이용 약관</a> | <a href="#">개인정보처리방침</a>
+    </div>
+    <p class="mb-0">© 2026 과외 매칭 시스템</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>
