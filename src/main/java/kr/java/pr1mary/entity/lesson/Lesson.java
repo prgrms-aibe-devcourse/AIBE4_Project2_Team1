@@ -37,6 +37,9 @@ public class Lesson extends BaseEntity {
     @Column(nullable = false)
     private double averageRating;
 
+        @Column(nullable = false)
+        private Integer timePerSession;
+
     public enum Mode {
         ONLINE, OFFLINE
     }
@@ -49,6 +52,7 @@ public class Lesson extends BaseEntity {
         board.subjects = lessonRequest.getSubjects();
         board.mode = lessonRequest.getMode();
         board.price = lessonRequest.getPrice();
+        board.timePerSession = lessonRequest.getTimePerSession();
         board.averageRating = 0.0;
 
         return board;
