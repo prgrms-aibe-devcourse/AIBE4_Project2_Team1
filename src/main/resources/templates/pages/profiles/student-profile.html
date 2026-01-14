@@ -106,14 +106,14 @@
             <section class="section-card">
                 <h3>📅 다가오는 수업</h3>
                 <div style="margin-top: 10px; color: var(--text-secondary);">
-                    <p><strong>D-1</strong> 수업 제목 - XXX 선생님 | 내일 16:00 (Zoom)</p>
-                    <p><strong>D-5</strong> 수업 제목 - XXX 선생님 | 수요일 16:00 (Zoom)</p>
+                    <p><strong th:text="${}">수업 제목</strong> 수업 제목 - XXX 선생님</p>
+                    <p><strong>D-5</strong> 수업 제목 - XXX 선생님</p>
                 </div>
             </section>
 
             <section class="section-card">
                 <div class="tab-menu">
-                    <span class="active">수강 내역</span> | <span>찜한 목록</span> | <span>결제 관리</span>
+                    <span class="active">수강 내역</span>
                 </div>
                 <div class="list-row" th:each="book: ${bookings}">
                     <span th:text="${book.lesson.title}">20XX.XX.XX - 수업 제목</span>
