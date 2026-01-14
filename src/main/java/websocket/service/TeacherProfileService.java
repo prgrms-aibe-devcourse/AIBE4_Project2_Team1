@@ -100,4 +100,9 @@ public class TeacherProfileService {
     public List<Booking> getAllBookings(Long teacherId) {
         return bookingRepository.findAllByTeacherId(teacherId);
     }
+
+    // 교사 프로필 생성 => 교사 계정 생성 시 같이 저장해야 함
+    public void insertTeacherProfile() {
+        teacherProfileRepository.save(new TeacherProfile());
+    }
 }

@@ -34,7 +34,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
-                        .requestMatchers("/", "/login/**", "/css/**", "/js/**", "/api/login", "/api/signup", "/api/logintest").permitAll()
+                        .requestMatchers("/", "/login/**", "/css/**", "/js/**", "/api/login", "/api/signup", "/api/logintest", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
@@ -115,5 +115,10 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+    
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/images/**", "/css/**", "/js/**", "/favicon.ico");
     }
 }
