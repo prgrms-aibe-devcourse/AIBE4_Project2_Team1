@@ -1,11 +1,18 @@
 package websocket.service;
 
+import jakarta.persistence.EntityNotFoundException;
+import websocket.dto.api.request.ScheduleRequest;
+import websocket.dto.api.response.ScheduleResponse;
 import websocket.dto.api.response.TeacherScheduleResponse;
 import websocket.dto.view.ScheduleDto;
 import websocket.entity.lesson.Booking;
+import websocket.entity.lesson.Lesson;
 import websocket.entity.lesson.Schedule;
+import websocket.entity.user.User;
 import websocket.repository.BookingRepository;
+import websocket.repository.LessonRepository;
 import websocket.repository.ScheduleRepository;
+import websocket.repository.UserRepository;
 import websocket.type.BookingStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +28,8 @@ import java.util.stream.Collectors;
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final BookingRepository bookingRepository;
+    private final UserRepository userRepository;
+    private final LessonRepository lessonRepository;
 
     // ==========================================
     //  [학생 기능] 수강 신청 팝업 데이터 조회 (기존 코드)
@@ -95,5 +104,19 @@ public class ScheduleService {
                     .build();
 
         }).collect(Collectors.toList());
+    }
+
+    // 일정 생성
+    public ScheduleResponse createSchedule(ScheduleRequest request, Long teacherId) {
+        User user = userRepository.findById(teacherId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        Lesson lesson = lessonRepository.findById(request.lessonId())
+                .orElseThrow(() -> new EntityNotFoundException("과외를 찾을 수 없습니다."));
+
+        Schedule schedule = new Schedule(request, lesson, user);
+        Schedule saved = scheduleRepository.save(schedule);
+
+        return ScheduleResponse.from(saved);
     }
 }

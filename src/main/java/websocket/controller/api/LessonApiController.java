@@ -1,9 +1,11 @@
 package websocket.controller.api;
 
 import jakarta.validation.Valid;
+import websocket.dto.api.response.LessonDetailResponse;
 import websocket.dto.api.response.LessonResponse;
 import websocket.dto.api.request.LessonRequest;
 import websocket.dto.api.request.LessonUpdateRequest;
+import websocket.entity.lesson.Subjects;
 import websocket.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,8 @@
 package websocket.controller.view;
 
+import websocket.dto.api.response.LessonDetailResponse;
 import websocket.entity.lesson.Lesson;
+import websocket.entity.lesson.Subjects;
 import websocket.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
