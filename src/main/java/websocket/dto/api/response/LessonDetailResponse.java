@@ -3,6 +3,8 @@ package websocket.dto.api.response;
 import websocket.entity.lesson.Lesson;
 import websocket.entity.lesson.Subjects;
 
+import java.time.Duration;
+
 public record LessonDetailResponse(
         Long id,
         String title,
@@ -10,9 +12,11 @@ public record LessonDetailResponse(
         Subjects subjects,
         String mode,
         Long price,
-        Double averageRating
+        Double averageRating,
+        Integer duration
 ) {
         public static LessonDetailResponse from(Lesson lesson) {
+
                 return new LessonDetailResponse(
                         lesson.getId(),
                         lesson.getTitle(),
@@ -20,7 +24,8 @@ public record LessonDetailResponse(
                         lesson.getSubjects(),
                         lesson.getMode().toString(),
                         lesson.getPrice(),
-                        lesson.getAverageRating()
+                        lesson.getAverageRating(),
+                        lesson.getTimePerSession()
                 );
         }
 }

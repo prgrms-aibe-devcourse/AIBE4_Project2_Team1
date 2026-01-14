@@ -32,4 +32,8 @@ public class LessonRequest {
     @NotNull(message = "가격을 입력해주세요.")
     @Min(value = 1000)
     private Long price;
+
+    @NotNull(message = "수업 시간은 필수입니다.")
+    @Min(value = 60, message = "수업 시간은 최소 1시간 이상이어야 합니다.")
+    private Integer timePerSession;
 }

@@ -2,10 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <header th:fragment="header">
     <div class="header-logo">
-        <span id="menuBtn" class="material-icons-outlined menu-icon">menu</span>
-        <!-- 로고로 바꾸기 -->
-        <a href="/" style="text-decoration: none; color: inherit;">
-            StudyLink
+        <a href="/" style="display: flex; align-items: center;">
+            <img th:src="@{/images/logo.png}" alt="StudyLink Logo" style="height: 40px; width: auto;">
         </a>
     </div>
 
