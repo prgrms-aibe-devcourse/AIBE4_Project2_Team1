@@ -2,11 +2,7 @@
 spring:
   application:
     name: pr1mary
-    jpa:
-      hibernate:
-        # update, create
-        ddl-auto: update
-      show-sql: true
+
   profiles:
     active: prod
 
