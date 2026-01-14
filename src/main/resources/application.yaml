@@ -4,8 +4,19 @@ spring:
     name: pr1mary
 
   profiles:
-    active: dev
+    active: prod
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2MB
+      max-request-size: 30MB
 
 # 서버 설정
 server:
   port: 8080
+
+# 파일 업로드 경로
+file:
+  path-student: /studentImage
+  path-teacher: /teacherImage

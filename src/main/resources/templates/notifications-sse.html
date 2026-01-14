@@ -1,0 +1,20 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Notifications (SSE)</title>
+</head>
+<body>
+<h1>알림 인박스 (SSE)</h1>
+
+<div>
+    <span>안읽음: </span><strong id="unreadCount">0</strong>
+</div>
+
+<ul id="list"></ul>
+
+<pre id="log"></pre>
+
+<script th:src="@{/js/notifications-sse.js}"></script>
+</body>
+</html>

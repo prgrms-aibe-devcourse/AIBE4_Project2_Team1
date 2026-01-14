@@ -1,6 +1,6 @@
 ## 파일 구조
 ```text
-kr.java.pr1mary
+kr.java.sse_websocket
 ├── controller
 │   ├── api
 │   └── view

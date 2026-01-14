@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지 - 김학생</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        /* 와이어프레임 특유의 레이아웃을 위한 추가 스타일 */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        /* 왼쪽 프로필 카드 */
+        .profile-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 30px 20px;
+            text-align: center;
+            height: fit-content;
+            border: 1px solid var(--divider);
+        }
+        .profile-img-circle {
+            width: 100px; height: 100px;
+            background: #e0e0e0; border-radius: 50%;
+            margin: 0 auto 15px;
+        }
+        .profile-info h2 { margin-bottom: 5px; }
+        .profile-info p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px; }
+        .side-btns { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .btn-side {
+            padding: 10px; border-radius: 20px; border: 1px solid var(--text-primary);
+            background: var(--white); cursor: pointer; font-size: 0.85rem;
+        }
+
+        /* 메인 콘텐츠 영역 */
+        .section-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--divider);
+        }
+        .tab-menu {
+            display: flex; gap: 15px; margin-bottom: 15px;
+            font-weight: bold; cursor: pointer;
+        }
+        .tab-menu span.active { color: var(--primary); text-decoration: underline; }
+
+        /* 수강 내역 리스트 */
+        .list-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px dashed var(--divider);
+        }
+        .status-badge { font-weight: bold; margin-left: auto; margin-right: 20px; }
+
+        /* 찜한 목록 그리드 */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .course-item {
+            border: 1px solid var(--divider); border-radius: var(--border-radius);
+            padding: 15px; text-align: center; position: relative;
+        }
+        .heart { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); }
+
+        /* 결제 내역 */
+        .payment-item { padding: 15px 0; border-bottom: 1px solid var(--divider); }
+        .payment-price { font-weight: bold; color: var(--primary-dark); margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-logo">
+        <span class="menu-icon">☰</span> 로고
+    </div>
+    <div class="header-icons">
+        <span>🔔</span>
+        <span>💬</span>
+    </div>
+</header>
+
+<div class="container">
+    <div class="content-wrapper">
+        <aside class="profile-card">
+            <img th:src="@{'/studentImage/' + profile.imageUrl}" class="profile-img-circle" alt="프로필">
+            <div class="profile-info">
+                <h2 th:text="${profile.user.name}">김학생</h2>
+                <p th:text="${profile.user.email}">student@email.com</p>
+                <p th:text="${profile.regionCode}">대한민국 어딘가</p>
+            </div>
+            <div class="side-btns">
+                <button class="btn-side" th:onclick="|location.href='@{/profile/student/update(id=${profile.user.id})}'|">프로필 편집</button>
+                <button class="btn-side">선생님으로 전환</button>
+                <button class="btn-side">로그아웃</button>
+            </div>
+        </aside>
+
+        <main>
+            <div style="margin-bottom: 25px;">
+                <p th:text="반가워요, ${profile.user.name}님!"></p>
+                <h1 style="font-size: 1.4rem;">"오늘도 힘차게 공부해볼까요?"</h1>
+            </div>
+
+            <section class="section-card">
+                <h3>📅 다가오는 수업</h3>
+                <div style="margin-top: 10px; color: var(--text-secondary);">
+                    <p><strong>D-1</strong> 수업 제목 - XXX 선생님 | 내일 16:00 (Zoom)</p>
+                    <p><strong>D-5</strong> 수업 제목 - XXX 선생님 | 수요일 16:00 (Zoom)</p>
+                </div>
+            </section>
+
+            <section class="section-card">
+                <div class="tab-menu">
+                    <span class="active">수강 내역</span> | <span>찜한 목록</span> | <span>결제 관리</span>
+                </div>
+                <div class="list-row" th:each="book: ${bookings}">
+                    <span th:text="${book.lesson.title}">20XX.XX.XX - 수업 제목</span>
+                    <span class="status-badge">수강완료</span>
+                    <button class="btn-side" th:onclick="|location.href='@{/review(userId=${profile.user.id},lessonId=${book.lesson.id})}'|" style="padding: 2px 10px;">리뷰 수정</button>
+                </div>
+<!--                <div class="list-row">-->
+<!--                    <span>20XX.XX.XX - 세상과 소통하는 즐거움, 자신감 영어</span>-->
+<!--                    <span class="status-badge">수강완료</span>-->
+<!--                    <button class="btn-side" style="padding: 2px 10px;">리뷰 작성</button>-->
+<!--                </div>-->
+            </section>
+
+<!--            <div class="grid-3">-->
+<!--                <div class="course-item" th:each="i : ${#numbers.sequence(1,3)}">-->
+<!--                    <span class="heart">❤️</span>-->
+<!--                    <p style="font-size: 0.8rem; margin-top: 15px;">영어</p>-->
+<!--                    <p><strong>입이 트이는 영어</strong></p>-->
+<!--                    <p style="font-size: 0.8rem;">XXX 선생님</p>-->
+<!--                    <p class="payment-price">30,000원 / 시간</p>-->
+<!--                    <button class="btn-side" style="width: 100%; margin-top: 10px;">수강 신청</button>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <section class="section-card" style="margin-top: 20px;">
+                <h3>최근 결제 내역</h3>
+                <div class="payment-item" th:each="pay: ${payments}">
+                    <p th:text="${pay.createdAt}">20XX. XXX. XX (월)</p>
+                    <p th:text="${pay.booking.lesson.title}"><strong>원리를 꿰뚫어 답을 찾는, 통찰 수학 - XXX 선생님</strong></p>
+                    <p th:text="${pay.amount}원" class="payment-price">60,000원</p>
+                </div>
+<!--                <div class="payment-item">-->
+<!--                    <p>20XX. XXX. XX (수)</p>-->
+<!--                    <p><strong>세상과 소통하는 즐거움, 자신감 영어 - XXX 선생님</strong></p>-->
+<!--                    <p class="payment-price">50,000원 (2시간)</p>-->
+<!--                </div>-->
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer-info">
+        <div class="footer-links">
+            <span>이용약관</span> | <span>개인정보처리방침</span> | <span>고객센터</span>
+        </div>
+        <p class="copyright">© 2026 My Study Platform. All rights reserved.</p>
+    </footer>
+</div>
+
+</body>
+</html>
