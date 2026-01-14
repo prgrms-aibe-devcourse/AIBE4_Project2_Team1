@@ -4,7 +4,6 @@ import websocket.dto.view.StudentDTO;
 import websocket.entity.Payment;
 import websocket.entity.lesson.Booking;
 import websocket.entity.user.StudentProfile;
-import kr.java.sse_websocket.repository.*;
 import websocket.repository.BookingRepository;
 import websocket.repository.PaymentRepository;
 import websocket.repository.StudentProfileRepository;

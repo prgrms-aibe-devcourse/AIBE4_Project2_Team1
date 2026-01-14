@@ -1,9 +1,9 @@
 package websocket.chat.repository;
 
 
-import websocket.chat.domain.ChatMessage;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import websocket.domain.ChatMessage;
 
 import java.util.List;
 

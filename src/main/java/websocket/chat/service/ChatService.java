@@ -1,8 +1,6 @@
 package websocket.chat.service;
 
 import websocket.chat.redis.ChatEventPayload;
-import websocket.chat.domain.ChatMessage;
-import websocket.chat.domain.ChatRoom;
 import websocket.chat.repository.ChatMessageRepository;
 import websocket.chat.repository.ChatRoomRepository;
 import websocket.chat.redis.ChatRedisKeys;
@@ -13,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import websocket.domain.ChatMessage;
+import websocket.domain.ChatRoom;
 
 import java.util.List;
 

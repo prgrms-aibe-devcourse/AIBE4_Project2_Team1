@@ -7,7 +7,6 @@ import websocket.entity.lesson.Subject;
 import websocket.entity.user.Review;
 import websocket.entity.user.TeacherProfile;
 import websocket.entity.user.User;
-import kr.java.sse_websocket.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
