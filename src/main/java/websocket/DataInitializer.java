@@ -33,7 +33,6 @@ public class DataInitializer implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
         if (userAccountRepository.count() > 0) {
-            log.info("데이터가 이미 존재합니다.");
             return;
         }
 
