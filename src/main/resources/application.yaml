@@ -4,7 +4,7 @@ spring:
     name: pr1mary
 
   profiles:
-    active: prod
+    active: dev
 
   servlet:
     multipart:

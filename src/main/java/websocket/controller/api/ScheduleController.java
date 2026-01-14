@@ -1,6 +1,9 @@
 package websocket.controller.api;
 
+import org.springframework.web.bind.annotation.*;
+import websocket.dto.api.request.ScheduleRequest;
 import websocket.dto.api.response.ApiResponse;
+import websocket.dto.api.response.ScheduleResponse;
 import websocket.dto.api.response.ScheduleSlotResponse;
 import websocket.dto.api.response.TeacherScheduleResponse;
 import websocket.service.BookingService;
@@ -8,10 +11,6 @@ import websocket.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat; // 추가됨
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate; // 반드시 필요
 import java.util.List;
@@ -25,6 +24,15 @@ public class ScheduleController {
 
     // 선생님 기능 - 내 시간표 조회
     private final ScheduleService scheduleService;
+
+    // 스케쥴 생성
+    @PostMapping
+    public ResponseEntity<ScheduleResponse> createSchedule(@RequestBody ScheduleRequest request,
+                                                           @RequestParam Long teacherId){
+        ScheduleResponse response = scheduleService.createSchedule(request, teacherId);
+
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/availability")
     public ResponseEntity<ApiResponse<List<ScheduleSlotResponse>>> getAvailabilitySchedules(
