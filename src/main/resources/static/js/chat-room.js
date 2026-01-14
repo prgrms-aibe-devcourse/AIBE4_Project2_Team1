@@ -112,11 +112,10 @@
         const content = inputEl.value.trim();
         if (!content) return;
 
-        stompClient.send(
-            `/app/chat/rooms/${roomId}/send`,
-            {},
-            JSON.stringify({ content })
-        );
+        // 서버로 전송
+        stompClient.send(`/app/chat/rooms/${roomId}/send`, {}, JSON.stringify({ content }));
+
+        appendMessage({ senderUsername: "나", content: content, createdAt: "방금" });
 
         inputEl.value = "";
     };

@@ -9,6 +9,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
+        #messages {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #messages li {
+            max-width: 70%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #eee;
+            align-self: flex-start; /* 상대방 메시지 */
+        }
+
+        #messages li strong {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--main-blue);
+        }
+
         :root {
             --main-blue: #2196F3;
             --light-blue: #E3F2FD;
@@ -143,7 +164,7 @@
 
             <div class="input-area">
                 <input id="messageInput" placeholder="메시지를 입력하세요" />
-                <button id="btnSend">전송</button>
+                <button id="btnSend" onclick="location.href='chat-room2.html'">전송</button>
             </div>
         </main>
     </div>
