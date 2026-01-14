@@ -1,6 +1,5 @@
 package websocket.controller.api.ChatController;
 
-import websocket.chat.domain.ChatRoom;
 import websocket.chat.repository.ChatRoomRepository;
 import websocket.chat.service.ChatService;
 import lombok.Data;
@@ -10,6 +9,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import websocket.domain.ChatRoom;
 
 import java.security.Principal;
 
@@ -17,11 +17,9 @@ import static websocket.common.UsernameNormalizer.normalize;
 
 /**
  * 채팅 WS 수신 컨트롤러.
- *
  * - client send: /app/chat/rooms/{roomId}/send
  * - server는 DB 저장 + Redis publish만 수행
  * - 실제 브로드캐스트는 Redis subscriber가 /topic/chat/rooms/{roomId}로 수행
- *
  * 장점:
  * - 서버 인스턴스가 여러 대여도 일관된 실시간 전파 구조
  */

@@ -1,8 +1,6 @@
 package websocket.controller.api.ChatController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import websocket.chat.domain.ChatMessage;
-import websocket.chat.domain.ChatRoom;
 import websocket.chat.redis.ChatRedisKeys;
 import websocket.chat.repository.ChatMessageRepository;
 import websocket.chat.repository.ChatRoomRepository;
@@ -12,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
+import websocket.domain.ChatMessage;
+import websocket.domain.ChatRoom;
 
 import java.security.Principal;
 import java.util.*;

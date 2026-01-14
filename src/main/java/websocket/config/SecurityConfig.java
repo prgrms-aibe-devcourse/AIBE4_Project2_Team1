@@ -1,7 +1,7 @@
-package kr.java.sse_websocket.config;
+package websocket.config;
 
 import jakarta.servlet.DispatcherType;
-import kr.java.sse_websocket.service.CustomOAuth2UserService;
+import websocket.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
