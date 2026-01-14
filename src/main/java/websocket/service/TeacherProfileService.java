@@ -28,9 +28,9 @@ public class TeacherProfileService {
     private final UserRepository userRepository;
     private final TeacherProfileRepository teacherProfileRepository;
     private final SubjectRepository subjectRepository;
-    private final ReviewRepository reviewRepository;
-    private final LessonRepository lessonRepository;
-    private final BookingRepository bookingRepository;
+    private final websocket.repository.ReviewRepository reviewRepository;
+    private final websocket.repository.LessonRepository lessonRepository;
+    private final websocket.repository.BookingRepository bookingRepository;
 
     @Value("${file.path-teacher}")
     private String teacherPath;

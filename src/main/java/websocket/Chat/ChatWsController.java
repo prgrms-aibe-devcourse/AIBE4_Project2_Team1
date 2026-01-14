@@ -1,4 +1,4 @@
-package websocket.controller.api.ChatController;
+package websocket.Chat;
 
 import websocket.chat.repository.ChatRoomRepository;
 import websocket.chat.service.ChatService;

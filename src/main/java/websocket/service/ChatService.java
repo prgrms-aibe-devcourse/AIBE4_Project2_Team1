@@ -1,4 +1,4 @@
-package websocket.chat.service;
+package websocket.service;
 
 import websocket.chat.redis.ChatEventPayload;
 import websocket.chat.repository.ChatMessageRepository;

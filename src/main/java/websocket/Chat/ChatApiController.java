@@ -1,4 +1,4 @@
-package websocket.controller.api.ChatController;
+package websocket.Chat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import websocket.chat.redis.ChatRedisKeys;
