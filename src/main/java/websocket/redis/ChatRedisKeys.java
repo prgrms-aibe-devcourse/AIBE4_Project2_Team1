@@ -1,4 +1,4 @@
-package websocket.chat.redis;
+package websocket.redis;
 
 
 /**

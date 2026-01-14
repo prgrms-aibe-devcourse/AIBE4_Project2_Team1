@@ -5,6 +5,10 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  data:
+    redis:
+      url: rediss://default:AVNS_j_MmNBt_76-Vv0lZlNB@valkey-30f2071b-tmddn74757-436c.l.aivencloud.com:21187
+
   jpa:
     hibernate:
       ddl-auto: validate

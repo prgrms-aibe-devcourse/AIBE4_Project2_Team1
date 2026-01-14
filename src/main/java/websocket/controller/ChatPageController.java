@@ -1,4 +1,4 @@
-package websocket.chat.controller;
+package websocket.controller;
 
 
 import org.springframework.stereotype.Controller;

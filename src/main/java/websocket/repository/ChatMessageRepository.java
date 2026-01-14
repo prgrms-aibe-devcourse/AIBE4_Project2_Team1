@@ -1,4 +1,4 @@
-package websocket.chat.repository;
+package websocket.repository;
 
 
 import org.springframework.data.domain.Pageable;

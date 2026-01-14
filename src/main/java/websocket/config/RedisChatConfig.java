@@ -1,7 +1,7 @@
 package websocket.config;
 
-import websocket.chat.redis.ChatRedisKeys;
-import websocket.chat.redis.RedisChatSubscriber;
+import websocket.redis.ChatRedisKeys;
+import websocket.redis.RedisChatSubscriber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;

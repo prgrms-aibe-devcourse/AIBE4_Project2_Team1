@@ -1,4 +1,4 @@
-package websocket.chat.redis;
+package websocket.redis;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

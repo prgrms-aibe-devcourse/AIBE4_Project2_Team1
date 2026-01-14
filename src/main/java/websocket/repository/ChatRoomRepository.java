@@ -1,4 +1,4 @@
-package websocket.chat.repository;
+package websocket.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import websocket.domain.ChatRoom;

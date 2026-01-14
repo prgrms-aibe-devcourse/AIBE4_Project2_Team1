@@ -1,4 +1,4 @@
-package websocket.chat.redis;
+package websocket.redis;
 
 import lombok.Builder;
 import lombok.Data;
