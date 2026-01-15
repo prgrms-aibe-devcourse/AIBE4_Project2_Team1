@@ -17,7 +17,6 @@ public class BookingCreateResponse {
     // 엔티티 -> DTO 변환 메서드
     public static BookingCreateResponse of(Booking booking) {
         return BookingCreateResponse.builder()
-                // 1. 주문번호 생성: "ORDER_" + DB PK 조합 (고유성 보장)
                 .orderId(booking.getId())
 
                 // 2. 수업 이름: Booking -> Schedule -> Lesson -> Subject(혹은 Title)
