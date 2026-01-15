@@ -9,9 +9,108 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+<!--    <link rel="stylesheet" th:href="@{/css/style.css}">-->
 
     <style>
+        /* resources/static/css/global.css */
+
+        /* --- 공통 변수 및 설정 --- */
+        :root {
+            --primary: #2196F3;
+            --primary-dark: #1976D2;
+            --light-primary: #BBDEFB;
+            --accent: #CDDC39;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --white: #FFFFFF;
+            --bg-color: #f0f2f5;
+            --divider: #e0e0e0;
+
+            --header-height: 60px;
+            --border-radius: 12px;
+            --max-width: 1200px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-top: var(--header-height); /* 헤더 높이만큼 여백 */
+        }
+
+        /* --- 공통 헤더 스타일 --- */
+        header {
+            background-color: var(--white);
+            height: var(--header-height);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--divider);
+            position: fixed; top: 0; left: 0; width: 100%;
+            z-index: 1000;
+        }
+        .header-logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-icon {
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* --- 공통 푸터 스타일 --- */
+        .footer-info {
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid var(--divider);
+            margin-top: 40px;
+            color: var(--text-secondary);
+        }
+
+        .footer-links span {
+            margin: 0 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .footer-links span:hover {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            font-size: 0.8rem;
+            margin-top: 12px;
+            color: #999;
+        }
+
+        /* --- 공통 컨테이너 --- */
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+        /* global.css 끝*/
+
         /* --- [레이아웃] --- */
         .detail-container {
             display: grid;
@@ -104,12 +203,10 @@
     </div>
 
     <div class="detail-container">
-
         <section class="main-content">
-
             <div class="lesson-header-section">
-                <span class="badge-subject" th:text="${lesson.subjects}">MATH</span>
-                <h1 class="detail-title" th:text="${lesson.title}">고등 수학 완전 정복</h1>
+                <span class="badge-subject" th:text="${lesson.subjects}"></span>
+                <h1 class="detail-title" th:text="${lesson.title}"></h1>
 
                 <div class="teacher-profile">
                     <div class="teacher-avatar">
@@ -126,7 +223,6 @@
             <article>
                 <h3 class="section-header">수업 소개</h3>
                 <div class="text-body" th:text="${lesson.description}">
-                    이 수업은 기초가 부족한 학생들을 위해... (상세 내용)
                 </div>
             </article>
         </section>
@@ -134,16 +230,16 @@
         <aside class="sidebar">
             <div class="booking-card">
                 <div class="price-section">
-                    <span class="price-value" th:text="${#numbers.formatInteger(lesson.price, 0, 'COMMA')}">50,000</span>
+                    <span class="price-value" th:text="${#numbers.formatInteger(lesson.price, 0, 'COMMA')}"></span>
                     <span class="price-value">원</span>
-                    <span class="price-unit">/ 시간 단위</span>
+                    <span class="price-unit">/ 시간</span>
                 </div>
 
                 <div style="border-top: 1px solid #f0f0f0; margin: 16px 0;"></div>
 
                 <div class="info-row">
                     <span class="info-label">수업 방식</span>
-                    <span class="info-value" th:text="${lesson.mode == 'ONLINE' ? '온라인 화상' : '오프라인 대면'}">온라인</span>
+                    <span class="info-value" th:text="${lesson.mode == 'ONLINE' ? '온라인 화상' : '오프라인 대면'}"></span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">총 소요 시간</span>

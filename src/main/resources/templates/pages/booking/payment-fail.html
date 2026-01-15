@@ -1,11 +1,49 @@
-<!doctype html>
-<html lang="ko">
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>결제 실패</title>
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .result-container {
+            max-width: 600px; margin: 100px auto; padding: 40px;
+            text-align: center; border: 1px solid #ddd; border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .icon-fail { font-size: 64px; color: #D32F2F; margin-bottom: 20px; }
+        .error-msg {
+            background-color: #ffebee; color: #c62828;
+            padding: 15px; border-radius: 8px; margin: 20px 0;
+        }
+        .btn-retry {
+            padding: 12px 24px; background-color: #666; color: white;
+            border: none; border-radius: 8px; font-weight: 700; cursor: pointer;
+        }
+        .btn-home {
+            padding: 12px 24px; background-color: #007bff; color: white;
+            border: none; border-radius: 8px; font-weight: 700; cursor: pointer;
+            text-decoration: none; display: inline-block;
+        }
+    </style>
 </head>
 <body>
-    <h1>결제 실패. 다시 시도해주세요.</h1>
-    <button class="payment-button" onclick="location.href='/'">확인</button>
+<div class="container result-container">
+    <span class="material-icons icon-fail">error_outline</span>
+    <h2>결제가 정상적으로 처리되지 않았습니다.</h2>
+
+    <div class="error-msg">
+        <p><strong th:text="${errorMessage}">오류 메시지</strong></p>
+        <p style="font-size:12px; margin-top:5px;">에러 코드: <span th:text="${errorCode}">CODE</span></p>
+    </div>
+
+    <p style="margin-bottom: 30px; color: #666;">
+        주문 번호: <span th:text="${orderId}"></span><br>
+        잠시 후 다시 시도해 주세요.
+    </p>
+
+    <button onclick="history.back()" class="btn-retry">다시 시도하기</button>
+    <a href="/" class="btn-home">홈으로 가기</a>
+</div>
 </body>
 </html>

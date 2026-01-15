@@ -6,6 +6,7 @@ import kr.java.pr1mary.dto.api.request.BookingCreateRequest;
 import kr.java.pr1mary.dto.api.response.ApiResponse;
 import kr.java.pr1mary.dto.api.response.BookingCreateResponse;
 import kr.java.pr1mary.dto.api.response.BookingHistoryResponse;
+import kr.java.pr1mary.entity.lesson.Booking;
 import kr.java.pr1mary.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,9 +34,9 @@ public class BookingController {
             @RequestBody @Valid BookingCreateRequest request
     ){
         // 서비스 실행 - ID 반환
-        Long bookingId = bookingService.registerBooking(request);
+        Booking booking = bookingService.registerBooking(request);
 
-        BookingCreateResponse data = BookingCreateResponse.of(bookingId, "PENDING");
+        BookingCreateResponse data = BookingCreateResponse.of(booking);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

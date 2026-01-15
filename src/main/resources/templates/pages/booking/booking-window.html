@@ -14,7 +14,7 @@
 
     <link rel="stylesheet" th:href="@{/css/global.css}">
 
-    <script src="https://js.tosspayments.com/v2/standard"></script>
+    <script src="https://js.tosspayments.com/v1/standard"></script>
 
     <style>
         :root {
@@ -299,7 +299,7 @@
     }
 
     async function fetchAvailableTimes(dateStr) {
-        const teacherId = document.getElementById('hiddenTeacherId').value || 1;
+        const teacherId = document.getElementById('hiddenTeacherId').value;
         const container = document.getElementById('timeSlotsContainer');
         container.innerHTML = '<span style="font-size:12px;">시간 조회 중...</span>';
 
@@ -320,7 +320,7 @@
                 const btn = document.createElement('button');
                 btn.className = 'chip';
                 // 시간만 추출 (예: 14:00)
-                const timeLabel = slot.startTime.substring(11, 16);
+                const timeLabel = slot.startTime.split('T')[1].substring(0, 5);
                 btn.innerText = timeLabel;
 
                 if(slot.isBooked) {
@@ -397,9 +397,13 @@
                 throw new Error(err.message || "예약 생성 실패");
             }
 
-            const bookingData = await response.json();
-            // 서버에서 orderId를 받아온다고 가정
-            const orderId = bookingData.orderId || `ORDER_${new Date().getTime()}`;
+            const responseJson = await response.json();
+            const bookingData = responseJson.data();
+
+            if(!bookingData || bookingData.orderId){
+                throw new Error("서버로부터 주문 번호를 받지 못했습니다.");
+            }
+            const orderId = bookingData.orderId;
 
             // Toss 결제창 호출
             const clientKey = "test_ck_yZqmkKeP8gWj1B0QjXRB8bQRxB9l"; // 본인 키 사용
@@ -412,8 +416,8 @@
                     value: Number(document.getElementById('hiddenPrice').value),
                 },
                 orderId: orderId,
-                orderName: "1:1 코딩 수업",
-                customerName: "수강생",
+                orderName: bookingData.orderName || "[[${subject}]]",
+                customerName: bookingData.customerName || "[[${studentName}]]",
 
                 successUrl: window.location.origin + "/payment/success",
                 failUrl: window.location.origin + "/payment/fail",
