@@ -29,4 +29,8 @@ public class SignupService {
 
         userAccountRepository.save(user);
     }
+
+    public boolean checkEmailExists(String email) {
+        return userAccountRepository.existsByEmail(email);
+    }
 }

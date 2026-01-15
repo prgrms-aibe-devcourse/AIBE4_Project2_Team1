@@ -46,14 +46,14 @@ public class SecurityConfig {
                         .loginProcessingUrl("/api/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/api/logintest", true)
+                        .defaultSuccessUrl("/", true)
                         .failureHandler(authenticationFailureHandler())
                         .permitAll()
                 )
 
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/api/login")
-                        .defaultSuccessUrl("/api/logintest", true)
+                        .defaultSuccessUrl("/", true)
                         .failureUrl("/api/login?error=oauth")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
