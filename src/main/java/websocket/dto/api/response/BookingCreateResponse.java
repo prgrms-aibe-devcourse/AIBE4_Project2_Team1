@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 public class BookingCreateResponse {
 
-    private String orderId;       // Toss용 주문번호 (문자열)
+    private Long orderId;         // 예약 번호
     private String orderName;     // 수업 이름
     private String customerName;  // 학생 이름
     private String customerEmail; // 학생 이메일
@@ -17,8 +17,7 @@ public class BookingCreateResponse {
     // 엔티티 -> DTO 변환 메서드
     public static BookingCreateResponse of(Booking booking) {
         return BookingCreateResponse.builder()
-                // 1. 주문번호 생성: "ORDER_" + DB PK 조합 (고유성 보장)
-                .orderId("ORDER_" + booking.getId())
+                .orderId(booking.getId())
 
                 // 2. 수업 이름: Booking -> Schedule -> Lesson -> Subject(혹은 Title)
                 // (Entity 구조에 따라 getLesson().getTitle() 등 getter 이름 확인 필요)

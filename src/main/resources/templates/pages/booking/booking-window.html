@@ -399,7 +399,7 @@
 
             const result = await response.json();
             // 서버에서 orderId를 받아온다고 가정
-            const bookingId = result.data.bookingId;
+            const bookingId = result.data.orderId;
             const orderNumber = generateTodayWithRandom();
 
             // Toss 결제창 호출
@@ -414,8 +414,8 @@
                     value: Number(document.getElementById('hiddenPrice').value),
                 },
                 orderId: orderNumber,
-                orderName: bookingData.orderName,
-                customerName: bookingData.customerName,
+                orderName: result.data.orderName,
+                customerName: result.data.customerName,
                 successUrl: window.location.origin + "/payment/success?bookingId=" + bookingId,
                 failUrl: window.location.origin + "/payment/fail",
                 card: {
