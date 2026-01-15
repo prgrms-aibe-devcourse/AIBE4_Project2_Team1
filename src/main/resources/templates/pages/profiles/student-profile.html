@@ -84,8 +84,8 @@
             </div>
             <div class="side-btns">
                 <button class="btn-side" th:onclick="|location.href='@{/profile/student/update(id=${profile.user.id})}'|">프로필 편집</button>
-                <button class="btn-side">선생님으로 전환</button>
-                <button class="btn-side">로그아웃</button>
+<!--                <button class="btn-side">선생님으로 전환</button>-->
+                <button class="btn-side" onclick="location.href='/api/logout'">로그아웃</button>
             </div>
         </aside>
 
