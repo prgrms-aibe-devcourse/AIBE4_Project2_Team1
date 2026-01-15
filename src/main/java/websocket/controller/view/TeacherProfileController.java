@@ -2,6 +2,7 @@ package websocket.controller.view;
 
 import websocket.dto.view.TeacherDTO;
 import websocket.entity.lesson.Lesson;
+import websocket.service.BookingService;
 import websocket.service.TeacherProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TeacherProfileController {
     private final TeacherProfileService profileService;
+    private final BookingService bookingService;
 
     // 프로필 페이지
     @GetMapping
@@ -24,7 +26,8 @@ public class TeacherProfileController {
         for (Lesson lesson: lessons) profit += lesson.getPrice();
 
         model.addAttribute("profile", profileService.getProfileByTeacherId(id));
-        model.addAttribute("bookings", profileService.getAllBookings(id));
+        model.addAttribute("bookings", bookingService.getAllAfterNow(id));
+        model.addAttribute("reviews", profileService.getReviews(id));
         model.addAttribute("lessons", lessons);
         model.addAttribute("profit", profit);
         model.addAttribute("average", profileService.getAverageRating(id));

@@ -111,18 +111,18 @@
         <button class="btn-outline" th:onclick="|location.href='@{/profile/teacher/public(id=%{profile.user.id})}'|">공개 프로필 보기</button>
         <button class="btn-outline" th:onclick="|location.href='@{/profile/teacher/update(id=%{profile.user.id})}'|">프로필 편집</button>
 
-        <div class="menu-section">
-            <div class="menu-title">관리 메뉴</div>
-            <ul class="menu-list">
-                <li><i class="far fa-calendar-alt"></i> 시간표 설정</li>
-                <li><i class="fas fa-pencil-alt"></i> 내 수업 목록</li>
-                <li><i class="far fa-comments"></i> 수강생 후기</li>
-            </ul>
-        </div>
+<!--        <div class="menu-section">-->
+<!--            <div class="menu-title">관리 메뉴</div>-->
+<!--            <ul class="menu-list">-->
+<!--                <li><i class="far fa-calendar-alt" onclick="location.href='/teacher/timetable'"></i> 시간표 설정</li>-->
+<!--                <li><i class="fas fa-pencil-alt"></i> 내 수업 목록</li>-->
+<!--                <li><i class="far fa-comments"></i> 수강생 후기</li>-->
+<!--            </ul>-->
+<!--        </div>-->
 
         <div class="bottom-btns">
-            <button class="btn-outline">학생으로 전환</button>
-            <button class="btn-outline">로그아웃</button>
+            <button class="btn-outline" onclick="location.href='/teacher/timetable'">시간표 설정</button>
+            <button class="btn-outline" onclick="location.href='/api/logout'">로그아웃</button>
         </div>
     </aside>
 
@@ -132,35 +132,35 @@
         </div>
 
         <section>
-            <h3 class="section-title"><i class="fas fa-chart-bar"></i> 이번 달 성과</h3>
+            <h3 class="section-title"><i class="fas fa-chart-bar"></i> 수강생 후기</h3>
             <div class="dashboard-grid">
-                <div class="card">
-                    <div class="card-label">💰 예상수익</div>
-                    <div class="card-value" th:text="${profit}원">358,000원</div>
+                <div class="card" th:each="r: ${reviews}">
+                    <div class="card-label" th:text="${r.lesson.subjects}">수업 과목</div>
+                    <div class="card-value" th:text="${r.comment}">후기 내용</div>
                 </div>
-                <div class="card">
-                    <div class="card-label">⭐ 평점</div>
-                    <div class="card-value" th:text="${average + ' / 5.0'}">4.8 / 5.0</div>
-                </div>
-                <div class="card">
-                    <div class="card-label">📩 새 요청</div>
-                    <div class="card-value" th:text="${bookings.size() + '건'}">2건</div>
-                </div>
+<!--                <div class="card">-->
+<!--                    <div class="card-label">⭐ 평점</div>-->
+<!--                    <div class="card-value" th:text="${average + ' / 5.0'}">4.8 / 5.0</div>-->
+<!--                </div>-->
+<!--                <div class="card">-->
+<!--                    <div class="card-label">📩 새 요청</div>-->
+<!--                    <div class="card-value" th:text="${bookings.size() + '건'}">2건</div>-->
+<!--                </div>-->
             </div>
         </section>
 
         <section>
-            <h3 class="section-title"><i class="fas fa-bell"></i> 예약 요청 관리</h3>
+            <h3 class="section-title"><i class="fas fa-bell"></i> 예약 요청</h3>
             <div class="request-grid">
                 <div class="req-card" th:each="book : ${bookings}">
                     <div class="req-name" th:text="${book.student.name + ' (' + book.lesson.subjects + ')'}">XXX 학생 (영어)</div>
                     <div class="req-info">
                         <i class="far fa-calendar-check"></i>
-                        <span th:text="${book.schedule.startTime}">12월 25일 14:00 신청</span>
+                        <span th:text="${book.schedule.startTime} 시작">12월 25일 14:00 시작</span>
                     </div>
                     <div class="req-actions">
-                        <a href="#" class="req-accept">수락</a> |
-                        <a href="#" class="req-reject">거절</a>
+                        <a th:href="@{/api/bookings/{id}/accept(id=${book.getId()})}" class="req-accept">수락</a> |
+                        <a th:href="@{/api/bookings/{id}/reject(id=${book.getId()})}" class="req-reject">거절</a>
                     </div>
                 </div>
                 <div class="req-card" th:if="${bookings == null or bookings.isEmpty()}">
