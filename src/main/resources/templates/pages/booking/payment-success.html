@@ -3,14 +3,48 @@
 <head>
     <meta charset="utf-8" />
     <title>주문 완료</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <style>
+        .form-wrapper {
+            max-width: 720px; /* 입력 폼은 너무 넓으면 안 예뻐서 제한 */
+            margin: 0 auto;   /* 중앙 정렬 */
+            padding-bottom: 80px;
+        }
+        .btn-submit {
+            background-color: #fff;
+            border: 2px solid var(--text-primary);
+            color: var(--text-primary);
+            padding: 14px 40px;
+            font-size: 16px; font-weight: 700; border-radius: 8px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .submit-area { text-align: center; margin-top: 20px; }
+        .btn-submit:hover {
+            background-color: var(--text-primary);
+            color: #fff;
+        }
+    </style>
 </head>
 
 <body>
-    <h2>주문이 완료되었습니다.</h2>
-
-    <p><strong>주문 번호</strong>: <span th:text="${orderId}"></span></p>
-    <p><strong>총 결제 금액</strong>: <span th:text="${amount}"></span>원</p>
-
-    <button onclick="location.href='/'">확인</button>
+<header th:replace="~{fragments/header :: header}"></header>
+<main class="container">
+    <div class="form-wrapper">
+        <h2>주문이 완료되었습니다.</h2>
+        <br>
+        <p><strong>주문 번호</strong>: <span th:text="${orderId}"></span></p>
+        <br>
+        <p><strong>총 결제 금액</strong>: <span th:text="${amount}"></span>원</p>
+        <br>
+        <div class="submit-area">
+            <button class="btn-submit" onclick="location.href='/'">확인</button>
+        </div>
+    </div>
+</main>
 </body>
 </html>
