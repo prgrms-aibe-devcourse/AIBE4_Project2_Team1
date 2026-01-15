@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>프로필 편집</title>
@@ -85,6 +85,23 @@
         .btn-submit:hover {
             background-color: var(--primary-dark);
         }
+
+        /* 체크박스 그룹 전체를 감싸는 컨테이너 */
+        .checkbox-group {
+            display: flex;       /* 가로 정렬을 위한 설정 */
+            flex-direction: row; /* 기본값이 가로(row)입니다 */
+            gap: 20px;           /* 체크박스 사이의 간격 */
+            flex-wrap: wrap;     /* 화면이 좁아지면 자동으로 줄바꿈 */
+            align-items: center; /* 세로축 중앙 정렬 */
+        }
+
+        /* 개별 체크박스 아이템 스타일 */
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            gap: 5px;            /* 박스와 글자 사이 간격 */
+        }
     </style>
 </head>
 <body>
@@ -94,14 +111,10 @@
 <div class="container">
     <div class="content-wrapper">
         <aside class="profile-card">
-            <div class="profile-img-circle">👤</div>
+            <img th:src="@{'/teacherImage/' + ${profile.imageUrl}}" class="profile-img-circle"></img>
             <div class="profile-info">
                 <h2 th:text="${profile.user.name}"></h2>
                 <p th:text="${profile.user.email}"></p>
-            </div>
-            <div class="side-btns">
-                <button class="btn-side" style="background: var(--light-primary); border-color: var(--primary);">프로필 편집</button>
-                <button class="btn-side" onclick="location.href='/profile/teacher'">마이페이지로 돌아가기</button>
             </div>
         </aside>
 
@@ -113,10 +126,7 @@
                     <div class="profile-upload-section">
                         <div class="profile-img-circle" style="margin: 0; width: 80px; height: 80px;">👤</div>
                         <div>
-                            <label for="profileImage" style="display: inline-block; padding: 8px 15px; background: #f0f0f0; border-radius: 5px; cursor: pointer; font-size: 0.9rem; border: 1px solid #ddd;">
-                                사진 변경
-                            </label>
-                            <input type="file" id="profileImage" name="profileImage" style="display: none;">
+                            <input type="file" id="image" name="image">
                             <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">JPG, PNG (최대 2MB)</p>
                         </div>
                     </div>
@@ -132,8 +142,19 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="location">거주지</label>
-                        <input type="text" id="location" name="location" th:value="${profile.regionCode ?: '서울시 강남구'}" readonly>
+                        <label>과목</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input style="width: auto;" type="checkbox" name="subjects" value="MATH"> 수학</label>
+                            <label class="checkbox-item"><input style="width: auto;" type="checkbox" name="subjects" value="ENGLISH"> 영어</label>
+                            <label class="checkbox-item"><input style="width: auto;" type="checkbox" name="subjects" value="KOREAN"> 국어</label>
+                            <label class="checkbox-item"><input style="width: auto;" type="checkbox" name="subjects" value="HISTORY"> 역사</label>
+                            <label class="checkbox-item"><input style="width: auto;" type="checkbox" name="subjects" value="SCIENCE"> 과학</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regionCode">거주지</label>
+                        <input type="text" id="regionCode" name="regionCode" th:value="${profile.regionCode ?: '대한민국 어딘가'}">
                     </div>
 
                     <div class="form-group">

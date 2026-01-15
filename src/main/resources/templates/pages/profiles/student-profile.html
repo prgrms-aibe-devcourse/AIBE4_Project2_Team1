@@ -76,7 +76,7 @@
 <div class="container">
     <div class="content-wrapper">
         <aside class="profile-card">
-            <img th:src="@{'/studentImage/' + profile.imageUrl}" class="profile-img-circle" alt="프로필">
+            <img th:src="@{'/studentImage/' + ${profile.imageUrl}}" class="profile-img-circle" alt="프로필">
             <div class="profile-info">
                 <h2 th:text="${profile.user.name}">김학생</h2>
                 <p th:text="${profile.user.email}">student@email.com</p>
@@ -91,7 +91,7 @@
 
         <main>
             <div style="margin-bottom: 25px;">
-                <p th:text="반가워요, ${profile.user.name}님!"></p>
+                <p th:text="|반가워요, ${profile.user.name}님!|"></p>
                 <h1 style="font-size: 1.4rem;">"오늘도 힘차게 공부해볼까요?"</h1>
             </div>
 
@@ -133,9 +133,9 @@
             <section class="section-card" style="margin-top: 20px;">
                 <h3>최근 결제 내역</h3>
                 <div class="payment-item" th:each="pay: ${payments}">
-                    <p th:text="${pay.createdAt}">20XX. XXX. XX (월)</p>
-                    <p th:text="${pay.booking.lesson.title}"><strong>원리를 꿰뚫어 답을 찾는, 통찰 수학 - XXX 선생님</strong></p>
-                    <p th:text="${pay.amount}원" class="payment-price">60,000원</p>
+                    <p th:text="${pay.createdAt}">20XX. XXX. XX</p>
+                    <p><strong th:text="${pay.booking.lesson.title}">원리를 꿰뚫어 답을 찾는, 통찰 수학 - XXX 선생님</strong></p>
+                    <p th:text=|"${pay.amount}원|" class="payment-price">60,000원</p>
                 </div>
 <!--                <div class="payment-item">-->
 <!--                    <p>20XX. XXX. XX (수)</p>-->

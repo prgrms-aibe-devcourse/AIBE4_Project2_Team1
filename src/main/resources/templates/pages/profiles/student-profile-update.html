@@ -94,14 +94,10 @@
 <div class="container">
     <div class="content-wrapper">
         <aside class="profile-card">
-            <div class="profile-img-circle">👤</div>
+            <img th:src="@{'/studentImage/' + ${profile.imageUrl}}" class="profile-img-circle"></img>
             <div class="profile-info">
                 <h2 th:text="${profile.user.name}"></h2>
                 <p th:text="${profile.user.email}"></p>
-            </div>
-            <div class="side-btns">
-                <button class="btn-side" th:onclick="|location.href='@{/profile/student/update(id=${profile.user.id})}'|" style="background: var(--light-primary); border-color: var(--primary);">프로필 편집</button>
-                <button class="btn-side" th:onclick="|location.href='@{/profile/student(id=${profile.user.id})}'|">마이페이지로 돌아가기</button>
             </div>
         </aside>
 
@@ -109,14 +105,11 @@
             <div class="edit-form-card">
                 <h1 style="margin-bottom: 30px; font-size: 1.6rem;">프로필 편집</h1>
 
-                <form action="profile/student/update" method="post" enctype="multipart/form-data">
+                <form action="/profile/student/update" method="post" enctype="multipart/form-data">
                     <div class="profile-upload-section">
                         <div class="profile-img-circle" style="margin: 0; width: 80px; height: 80px;">👤</div>
                         <div>
-                            <label for="profileImage" style="display: inline-block; padding: 8px 15px; background: #f0f0f0; border-radius: 5px; cursor: pointer; font-size: 0.9rem; border: 1px solid #ddd;">
-                                사진 변경
-                            </label>
-                            <input type="file" id="profileImage" name="profileImage" style="display: none;">
+                            <input type="file" id="image" name="image">
                             <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">JPG, PNG (최대 2MB)</p>
                         </div>
                     </div>
@@ -132,8 +125,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="location">거주지</label>
-                        <input type="text" id="location" name="location" th:value="${profile.regionCode ?: '서울시 강남구'}" readonly>
+                        <label for="regionCode">거주지</label>
+                        <input type="text" id="regionCode" name="regionCode" th:value="${profile.regionCode ?: '대한민국 어딘가'}">
                     </div>
 
                     <div class="form-group">

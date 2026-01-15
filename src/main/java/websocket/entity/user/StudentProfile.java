@@ -22,4 +22,14 @@ public class StudentProfile extends BaseEntity {
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    public StudentProfile(User user) {
+        this.user = user;
+        this.bio = "안녕하세요, 새로운 학생입니다.";
+        this.regionCode = "대한민국 어딘가";
+    }
+
+    public StudentProfile() {
+
+    }
 }

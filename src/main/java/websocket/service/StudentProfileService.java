@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import websocket.repository.UserRepository;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional
 public class StudentProfileService {
+    private final UserRepository userRepository;
     private final StudentProfileRepository studentProfileRepository;
     private final BookingRepository bookingRepository;
     private final PaymentRepository paymentRepository;
@@ -35,18 +37,21 @@ public class StudentProfileService {
         StudentProfile profile = getProfileByStudentId(dto.getId());
 
         UUID uuid = UUID.randomUUID();
-        String imageFileName = uuid + "_" + dto.getId();
+        String imageFileName = uuid + "_" + dto.getImage().getOriginalFilename();
         System.out.println("이미지 이름: " + imageFileName);
 
-        Path imageFilePath = Paths.get(studentPath, imageFileName);
+        Path directoryPath = Paths.get(studentPath);
+        Path imageFilePath = directoryPath.resolve(imageFileName);
 
         try {
+            if (Files.notExists(directoryPath)) Files.createDirectories(directoryPath);
             Files.write(imageFilePath, dto.getImage().getBytes());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
         profile.setImageUrl(imageFileName);
+        profile.setRegionCode(dto.getRegionCode());
         profile.setBio(dto.getIntroduce());
     }
 
@@ -78,8 +83,10 @@ public class StudentProfileService {
 
     // 학생 id로 학생 정보 불러오기 => 없다면 빈(empty) 프로필 생성
     public StudentProfile getProfileByStudentId(Long id) {
-        return studentProfileRepository.findById(id)
-                .orElseGet(() -> studentProfileRepository.save(new StudentProfile()));
+        return studentProfileRepository.findByUser_Id(id)
+                .orElseGet(() -> studentProfileRepository.save(new StudentProfile(
+                        userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 유저입니다."))
+                )));
     }
 
     // 학생 id로 예약 정보 불러오기

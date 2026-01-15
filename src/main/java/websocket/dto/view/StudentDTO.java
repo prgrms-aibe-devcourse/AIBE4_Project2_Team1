@@ -10,4 +10,5 @@ public class StudentDTO {
     private Long id;
     private MultipartFile image;
     private String introduce;
+    private String regionCode;
 }

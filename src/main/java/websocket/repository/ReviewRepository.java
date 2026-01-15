@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
@@ -22,6 +23,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByStudentId(@Param("studentId") Long studentId);
 
     // 학생이 수업에 작성한 리뷰 불러오기
-    @Query("SELECT r FROM Review r WHERE r.user.id = :studentId AND r.lesson.id = :lessonId")
-    Review findByStudentIdAndLessonId(@Param("studentId") Long studentId, @Param("teacherId") Long teacherId);
+    Optional<Review> findByUserIdAndLessonId(Long userId, Long lessonId);
 }

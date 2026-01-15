@@ -28,4 +28,15 @@ public class TeacherProfile extends BaseEntity {
     public enum Level {
         ELEMENTARY, MIDDLE, HIGH, UNIVERSITY
     }
+
+    public TeacherProfile(User user) {
+        this.user = user;
+        this.bio = "안녕하세요, 새로운 교사입니다.";
+        this.regionCode = "대한민국 어딘가";
+        this.schoolLevel = Level.UNIVERSITY;
+    }
+
+    public TeacherProfile() {
+
+    }
 }

@@ -26,4 +26,13 @@ public class Review extends BaseEntity {
 
     @Column(nullable = false)
     private String comment;
+
+    public Review(User user, Lesson lesson) {
+        this.user = user;
+        this.lesson = lesson;
+        this.rating = 0;
+        this.comment = "";
+    }
+
+    public Review() {}
 }

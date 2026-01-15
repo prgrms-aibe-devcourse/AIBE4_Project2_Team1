@@ -18,5 +18,5 @@ server:
 
 # 파일 업로드 경로
 file:
-  path-student: /studentImage
-  path-teacher: /teacherImage
+  path-student: ${user.home}/upload/studentImage/
+  path-teacher: ${user.home}/upload/teacherImage/

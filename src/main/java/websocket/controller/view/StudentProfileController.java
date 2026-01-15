@@ -35,7 +35,7 @@ public class StudentProfileController {
 
     // 프로필 수정
     @PostMapping("/update")
-    public String updateStudentProfile(@RequestBody StudentDTO dto) {
+    public String updateStudentProfile(@ModelAttribute StudentDTO dto) {
         if (dto.getImage().isEmpty()) throw new IllegalArgumentException("잘못된 사진입니다.");
         profileService.updateStudentProfile(dto);
         return "redirect:/profile/student?id=%d".formatted(dto.getId());

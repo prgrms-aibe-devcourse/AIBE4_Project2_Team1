@@ -52,7 +52,11 @@ public class ReviewService {
 
     // 학생이 수업에 작성한 리뷰 불러오기
     public ReviewDTO loadReviewByStudentAndLesson(Long studentId, Long lessonId) {
-        return toDTO(reviewRepository.findByStudentIdAndLessonId(studentId, lessonId));
+        return toDTO(reviewRepository.findByUserIdAndLessonId(studentId, lessonId)
+                .orElseGet(() -> new Review(
+                        userRepository.findById(studentId).orElseThrow(() -> new NoSuchElementException("해당 사용자를 찾을 수 없음")),
+                        lessonRepository.findById(lessonId).orElseThrow(() -> new NoSuchElementException("해당 수업을 찾을 수 없음"))
+                )));
     }
 
     private ReviewDTO toDTO(Review review) {

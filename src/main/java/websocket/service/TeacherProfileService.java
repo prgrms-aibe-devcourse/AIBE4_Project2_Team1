@@ -4,6 +4,7 @@ import websocket.dto.view.TeacherDTO;
 import websocket.entity.lesson.Booking;
 import websocket.entity.lesson.Lesson;
 import websocket.entity.lesson.Subject;
+import websocket.entity.lesson.Subjects;
 import websocket.entity.user.Review;
 import websocket.entity.user.TeacherProfile;
 import websocket.entity.user.User;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional
 public class TeacherProfileService {
+    private final UserRepository userRepository;
     private final TeacherProfileRepository teacherProfileRepository;
     private final SubjectRepository subjectRepository;
     private final ReviewRepository reviewRepository;
@@ -38,18 +40,21 @@ public class TeacherProfileService {
         TeacherProfile profile = getProfileByTeacherId(dto.getId());
 
         UUID uuid = UUID.randomUUID();
-        String imageFileName = uuid + "_" + dto.getId();
+        String imageFileName = uuid + "_" + dto.getImage().getOriginalFilename();
         System.out.println("이미지 이름: " + imageFileName);
 
-        Path imageFilePath = Paths.get(teacherPath, imageFileName);
+        Path directoryPath = Paths.get(teacherPath);
+        Path imageFilePath = directoryPath.resolve(imageFileName);
 
         try {
+            if (Files.notExists(directoryPath)) Files.createDirectories(directoryPath);
             Files.write(imageFilePath, dto.getImage().getBytes());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
         profile.setImageUrl(imageFileName);
+        profile.setRegionCode(dto.getRegionCode());
         profile.setBio(dto.getIntroduce());
     }
 
@@ -82,17 +87,21 @@ public class TeacherProfileService {
     // 담당 과목 설정
     public void saveSubject(TeacherDTO dto) {
         User user = getProfileByTeacherId(dto.getId()).getUser();
-        if (subjectRepository.existsByUserAndSubjects(user, dto.getSubjects())) return;
-        Subject subject = new Subject();
-        subject.setUser(user);
-        subject.setSubjects(dto.getSubjects());
-        subjectRepository.save(subject);
+        for (Subjects s: dto.getSubjects()) {
+            if (subjectRepository.existsByUserAndSubjects(user, s)) return;
+            Subject subject = new Subject();
+            subject.setUser(user);
+            subject.setSubjects(s);
+            subjectRepository.save(subject);
+        }
     }
 
     // 교사 id로 교사 정보 불러오기 => 없다면 빈(empty) 프로필 생성
     public TeacherProfile getProfileByTeacherId(Long id) {
-        return teacherProfileRepository.findById(id)
-                .orElseGet(() -> teacherProfileRepository.save(new TeacherProfile()));
+        return teacherProfileRepository.findByUser_Id(id)
+                .orElseGet(() -> teacherProfileRepository.save(new TeacherProfile(
+                        userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 유저입니다."))
+                )));
     }
 
     // 리뷰 평점 가져오기

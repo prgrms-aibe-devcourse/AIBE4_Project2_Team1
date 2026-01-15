@@ -127,7 +127,7 @@
 <div class="container">
     <div class="content-wrapper">
         <aside class="profile-card">
-            <div class="profile-img-circle">👤</div>
+            <img th:src="@{'/studentImage/' + ${student.getImageUrl()}}" class="profile-img-circle">
             <div class="profile-info">
                 <h2 th:text="${student.user.name}"></h2>
                 <p th:text="${student.user.email}"></p>

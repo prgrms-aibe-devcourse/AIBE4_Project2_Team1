@@ -98,7 +98,7 @@
 
 <div class="container">
     <aside class="sidebar">
-        <img th:src="@{'/teacherImage/' + profile.imageUrl}" class="profile-img" alt="프로필">
+        <img th:src="@{'/teacherImage/' + ${profile.imageUrl}}" class="profile-img" alt="프로필">
 
         <h2 class="teacher-name" th:text="${profile.user.name}">이선생</h2>
         <p class="teacher-email">
@@ -108,10 +108,12 @@
             <i class="fas fa-map-marker-alt"></i> <span th:text="${profile.regionCode}">서울시 강남구</span>
         </p>
 
-        <button class="btn-outline" th:onclick="|location.href='@{/profile/teacher/public(id=%{profile.user.id})}'|">공개 프로필 보기</button>
-        <button class="btn-outline" th:onclick="|location.href='@{/profile/teacher/update(id=%{profile.user.id})}'|">프로필 편집</button>
+<!--        <button class="btn-outline" th:onclick="|location.href='@{/profile/teacher/public(id=%{profile.user.id})}'|">공개 프로필 보기</button>-->
+        <button class="btn-outline" th:onclick="|location.href='@{/profile/teacher/update(id=${profile.user.id})}'|">프로필 편집</button>
+        <button class="btn-outline" onclick="location.href='/teacher/timetable'">시간표 설정</button>
+        <button class="btn-outline" onclick="location.href='/api/logout'">로그아웃</button>
 
-<!--        <div class="menu-section">-->
+        <!--        <div class="menu-section">-->
 <!--            <div class="menu-title">관리 메뉴</div>-->
 <!--            <ul class="menu-list">-->
 <!--                <li><i class="far fa-calendar-alt" onclick="location.href='/teacher/timetable'"></i> 시간표 설정</li>-->
@@ -119,11 +121,6 @@
 <!--                <li><i class="far fa-comments"></i> 수강생 후기</li>-->
 <!--            </ul>-->
 <!--        </div>-->
-
-        <div class="bottom-btns">
-            <button class="btn-outline" onclick="location.href='/teacher/timetable'">시간표 설정</button>
-            <button class="btn-outline" onclick="location.href='/api/logout'">로그아웃</button>
-        </div>
     </aside>
 
     <main class="main-content">
@@ -153,10 +150,10 @@
             <h3 class="section-title"><i class="fas fa-bell"></i> 예약 요청</h3>
             <div class="request-grid">
                 <div class="req-card" th:each="book : ${bookings}">
-                    <div class="req-name" th:text="${book.student.name + ' (' + book.lesson.subjects + ')'}">XXX 학생 (영어)</div>
+                    <div class="req-name" th:text="|${book.student.name} (${book.lesson.subjects})|">XXX 학생 (영어)</div>
                     <div class="req-info">
                         <i class="far fa-calendar-check"></i>
-                        <span th:text="${book.schedule.startTime} 시작">12월 25일 14:00 시작</span>
+                        <span th:text="|${book.schedule.startTime} 시작|">12월 25일 14:00 시작</span>
                     </div>
                     <div class="req-actions">
                         <a th:href="@{/api/bookings/{id}/accept(id=${book.getId()})}" class="req-accept">수락</a> |
