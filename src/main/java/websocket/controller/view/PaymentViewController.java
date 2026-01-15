@@ -1,5 +1,6 @@
 package websocket.controller.view;
 
+import org.springframework.ui.Model;
 import websocket.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -16,12 +17,15 @@ public class PaymentViewController {
     // 결제 완료 페이지
     @GetMapping("/success")
     public String paymentSuccess(@RequestParam("bookingId") Long bookingId,
-                                 @RequestParam("orderId") String orderNumber,
+                                 @RequestParam("orderId") String orderId,
                                  @RequestParam("amount") Long amount,
-                                 @RequestParam("paymentKey") String paymentKey) {
+                                 @RequestParam("paymentKey") String paymentKey, Model model) {
         // 결제 승인 요청
 //        PaymentConfirmRequest paymentConfirmRequest = new PaymentConfirmRequest(bookingId, amount, paymentKey, orderNumber);
 //        paymentService.processPayment(paymentConfirmRequest);
+
+        model.addAttribute("orderId", orderId);
+        model.addAttribute("amount", amount);
 
         return "pages/booking/payment-success";
     }

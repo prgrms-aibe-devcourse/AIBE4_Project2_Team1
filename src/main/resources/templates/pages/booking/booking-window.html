@@ -397,26 +397,33 @@
                 throw new Error(err.message || "예약 생성 실패");
             }
 
-            const bookingData = await response.json();
+            const result = await response.json();
             // 서버에서 orderId를 받아온다고 가정
-            const orderId = bookingData.orderId;
+            const bookingId = result.data.bookingId;
+            const orderNumber = generateTodayWithRandom();
 
             // Toss 결제창 호출
             const clientKey = "test_ck_yZqmkKeP8gWj1B0QjXRB8bQRxB9l"; // 본인 키 사용
             const tossPayments = TossPayments(clientKey);
+            const payment = tossPayments.payment({customerKey: TossPayments.ANONYMOUS})
 
-            await tossPayments.requestPayment({
+            payment.requestPayment({
                 method: "CARD",
                 amount: {
                     currency: "KRW",
                     value: Number(document.getElementById('hiddenPrice').value),
                 },
-                orderId: orderId,
+                orderId: orderNumber,
                 orderName: "1:1 코딩 수업",
                 customerName: "수강생",
-
-                successUrl: window.location.origin + "/payment/success",
+                successUrl: window.location.origin + "/payment/success?bookingId=" + bookingId,
                 failUrl: window.location.origin + "/payment/fail",
+                card: {
+                    useEscrow: false,
+                    flowMode: "DEFAULT",
+                    useCardPoint: false,
+                    useAppCardOnly: false,
+                },
             });
 
         } catch (error) {
@@ -424,6 +431,21 @@
             alert("결제 진행 중 오류가 발생했습니다: " + error.message);
             payBtn.disabled = false;
             payBtn.innerText = "결제하기";
+        }
+
+        function generateTodayWithRandom() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let randomStr = '';
+            for (let i = 0; i < 8; i++) {
+                randomStr += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+
+            return `${yyyy}${mm}${dd}_${randomStr}`;
         }
     }
 </script>
