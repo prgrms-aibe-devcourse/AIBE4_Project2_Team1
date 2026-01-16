@@ -96,6 +96,11 @@ public class TeacherProfileService {
         }
     }
 
+    // 모든 교사 정보 불러오기
+    public List<TeacherProfile> getAllTeachers() {
+        return teacherProfileRepository.findAll();
+    }
+
     // 교사 id로 교사 정보 불러오기 => 없다면 빈(empty) 프로필 생성
     public TeacherProfile getProfileByTeacherId(Long id) {
         return teacherProfileRepository.findByUser_Id(id)
