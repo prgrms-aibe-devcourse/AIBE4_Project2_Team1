@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * 채팅 이벤트를 Redis Pub/Sub로 발행하는 Publisher.
  */
-@Component
+// @Component
 @RequiredArgsConstructor
 public class RedisChatPublisher {
 

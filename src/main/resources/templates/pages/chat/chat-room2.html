@@ -9,6 +9,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
+        #messages {
+            flex: 1; padding: 25px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 15px; list-style: none; margin: 0;
+        }
+
+        /* 말풍선 공통 스타일 */
+        .message-item {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        /* 상대방 메시지 (왼쪽) */
+        .message-item.received {
+            align-self: flex-start;
+            background-color: #F0F0F0;
+            color: #333;
+            border-bottom-left-radius: 2px;
+        }
+
+        /* 내 메시지 (오른쪽 - 필요 시 사용) */
+        .message-item.sent {
+            align-self: flex-end;
+            background-color: var(--main-blue);
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message-item .sender-name {
+            display: block;
+            font-weight: 700;
+            font-size: 0.75rem;
+            margin-bottom: 4px;
+            color: #555;
+        }
+
+        /* 빈 화면 아이콘 숨김 처리 (메시지가 있을 때) */
+        .has-messages .empty-state {
+            display: none;
+        }
+
         :root {
             --main-blue: #2196F3;
             --light-blue: #E3F2FD;
@@ -135,9 +179,15 @@
         </aside>
 
         <main class="chat-content">
-            <ul id="messages">
+            <ul id="messages" class="has-messages">
+                <li class="message-item received">
+                    <span class="sender-name">사용자 1</span>
+                    안녕하세요 배영식 선생님 관심있어서 연락드렸습니다.
+                </li>
+
                 <div class="empty-state">
-                    <i class="fa-solid fa-square-xmark"></i> <p>대화를 시작하려면 메시지를 입력하세요</p>
+                    <i class="fa-solid fa-square-xmark"></i>
+                    <p>대화를 시작하려면 메시지를 입력하세요</p>
                 </div>
             </ul>
 
