@@ -67,4 +67,9 @@ public class ReviewService {
         dto.setComment(review.getComment());
         return dto;
     }
+
+    // 모든 리뷰 불러오기
+    public List<ReviewDTO> getAllReviews() {
+        return reviewRepository.findAll().stream().map(this::toDTO).toList();
+    }
 }
