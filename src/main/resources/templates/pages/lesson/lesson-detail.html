@@ -152,6 +152,12 @@
                     <div>
                         <div style="font-size: 0.85rem; color: var(--text-secondary);">
                             <span class="material-icons star-icon" style="font-size: 14px; color: #FFC107;">star</span>
+
+                            <span style="font-weight: bold; color: var(--text-secondary)"
+                                  th:text="${lesson.averageRating != null ? #numbers.formatDecimal(lesson.averageRating, 1, 1) : '0.0'}">0.0
+                            </span>
+
+                            <span style="margin-left: 2px;">/ 5.0</span>
                         </div>
                     </div>
                 </div>
